@@ -1,3 +1,4 @@
+import globalStyles from '@/app/style/global'
 import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
 import {
@@ -8,7 +9,6 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native'
-import { globalStyles } from '../style/global'
 
 const Hero = () => {
     const buttonText = [

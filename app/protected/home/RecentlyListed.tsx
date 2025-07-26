@@ -1,3 +1,4 @@
+import globalStyles from '@/app/style/global';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -9,27 +10,12 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { globalStyles } from '../style/global';
+import books from '../../data/book';
 
 const fallbackImg = 'https://via.placeholder.com/100x150.png?text=No+Image';
 
 const RecentlyListed = () => {
     const router = useRouter();
-    const books = [
-        {
-            id: 1,
-            img: 'https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU',
-            title: 'Book One',
-            price: '100',
-        },
-        { id: 2, img: '', title: 'Data Structures & Algorithms', price: '100' },
-        { id: 3, img: '', title: 'Book Three', price: '100' },
-        { id: 4, img: '', title: 'Book Four', price: '100' },
-        { id: 5, img: '', title: 'Book Five', price: '100' },
-        { id: 6, img: '', title: 'Book Six', price: '100' },
-        { id: 7, img: '', title: 'Book Seven', price: '100' },
-    ];
-
     return (
         <View style={globalStyles.container}>
             <Text style={globalStyles.subHeading}>Recently Listed</Text>
@@ -48,6 +34,7 @@ const RecentlyListed = () => {
                         <View style={styles.cardContent}>
                             <View style={styles.textGroup}>
                                 <Text style={globalStyles.paragraph} numberOfLines={1}>{book.title}</Text>
+                                <Text style={{ ...globalStyles.paragraph, fontWeight: 'heavy' }}>{book.author}</Text>
                                 <Text style={globalStyles.smallText}>Rs. {book.price}</Text>
                             </View>
 
@@ -62,7 +49,7 @@ const RecentlyListed = () => {
                 ))}
 
                 {/* View All Button */}
-                <TouchableOpacity style={styles.viewAllButton} onPress={() => router.push('/page/allListedbook/AllBooks')}>
+                <TouchableOpacity style={styles.viewAllButton} onPress={() => router.push('/protected/allListedbook/AllBooks')}>
                     <Text style={globalStyles.paragraph}>View All</Text>
                 </TouchableOpacity>
             </ScrollView>

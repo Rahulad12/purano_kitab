@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native'
-import { globalStyles } from '../style/global'
+import globalStyles from '../style/global'
 
 const Header = () => {
     const buttonText = [

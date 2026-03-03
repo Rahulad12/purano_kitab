@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const globalStyles = StyleSheet.create({
+const globalStyles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -44,3 +44,5 @@ export const globalStyles = StyleSheet.create({
   },
   scrollView: {},
 });
+
+export default globalStyles;

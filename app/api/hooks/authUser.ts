@@ -1,10 +1,14 @@
+import { useAuth } from "@/app/context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import Toast from "react-native-toast-message";
 import { AuthRequest, AuthResponse } from "../../types";
 import axiosInstance from "../client";
 
 export const useAuthUser = () => {
+  const { setUser, setIsLoggedIn } = useAuth();
   return useMutation({
     mutationFn: async (credentials: AuthRequest) => {
       const response = await axiosInstance.post<AuthResponse>(
@@ -21,7 +25,24 @@ export const useAuthUser = () => {
       }
       return response.data?.user;
     },
+    onSuccess: async (data) => {
+      if (data) {
+        if (Platform.OS === "web") {
+          localStorage.setItem("user", JSON.stringify(data));
+        } else {
+          await AsyncStorage.setItem("user", JSON.stringify(data));
+        }
+        setUser(data);
+        setIsLoggedIn(true);
+        Toast.show({ type: "success", text1: "Login successful" });
+      }
+    },
     onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Login failed",
+        text2: error?.message || "Unknown error",
+      });
       console.error("Login error:", error);
     },
   });

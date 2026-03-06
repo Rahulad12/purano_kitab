@@ -1,14 +1,10 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useRegister } from "../api/hooks/authUser";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
@@ -40,7 +36,7 @@ const Register = () => {
       Toast.show({ type: "success", text1: "Registration successful" });
       setUser(data.user);
       setIsLoggedIn(true);
-      router.push("/protected/home/Hero");
+      router.push("/protected");
     } catch (error: any) {
       Toast.show({
         type: "error",
@@ -52,24 +48,21 @@ const Register = () => {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.label}>First Name</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Enter your first name"
         value={formData.firstName}
         onChangeText={(value) => setFormData({ ...formData, firstName: value })}
       />
 
       <Text style={styles.label}>Last Name</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Enter your last name"
         value={formData.lastName}
         onChangeText={(value) => setFormData({ ...formData, lastName: value })}
       />
 
       <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Enter your email"
         value={formData.email}
         onChangeText={(value) => setFormData({ ...formData, email: value })}
@@ -78,8 +71,7 @@ const Register = () => {
       />
 
       <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Enter your password"
         value={formData.password}
         onChangeText={(value) => setFormData({ ...formData, password: value })}
@@ -87,8 +79,7 @@ const Register = () => {
       />
 
       <Text style={styles.label}>Confirm Password</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Confirm your password"
         value={formData.confirmPassword}
         onChangeText={(value) =>
@@ -97,9 +88,9 @@ const Register = () => {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.registerButton} onPress={submitHandler}>
-        <Text style={styles.registerButtonText}>Register</Text>
-      </TouchableOpacity>
+      <Button variant="primary" onPress={submitHandler}>
+        <Text>Register</Text>
+      </Button>
     </View>
   );
 };
@@ -110,30 +101,10 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     padding: 20,
+    gap: 12,
   },
   label: {
-    marginTop: 12,
-    marginBottom: 4,
     fontSize: 14,
     color: "#555",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 6,
-    fontSize: 16,
-  },
-  registerButton: {
-    backgroundColor: "#e53935",
-    paddingVertical: 12,
-    borderRadius: 6,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  registerButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
   },
 });

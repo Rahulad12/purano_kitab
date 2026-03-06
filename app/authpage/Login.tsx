@@ -1,21 +1,16 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Switch,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Switch, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 import { useAuthUser } from "../api";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const router = useRouter();
-  const { setIsLoggedIn, setUser } = useAuth();
+  const { setIsLoggedIn } = useAuth();
   const [togglePassowrd, setTogglePassowrd] = useState(true);
   const [formData, setFormData] = useState({
     email: "",
@@ -25,8 +20,8 @@ const Login = () => {
   const { mutateAsync: loginUser } = useAuthUser();
   const submitHandler = async () => {
     try {
-      const data = await loginUser(formData);
-      console.log(data);
+      await loginUser(formData);
+      router.push("/protected");
     } catch (error: any) {
       Toast.show({
         type: "error",
@@ -40,8 +35,7 @@ const Login = () => {
       {/* Login Form */}
 
       <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Enter your email"
         value={formData.email}
         onChangeText={(value) => setFormData({ ...formData, email: value })}
@@ -50,8 +44,7 @@ const Login = () => {
       />
 
       <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
+      <Input
         placeholder="Enter your password"
         value={formData.password}
         onChangeText={(value) => setFormData({ ...formData, password: value })}
@@ -70,9 +63,9 @@ const Login = () => {
       </View>
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={submitHandler}>
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
+      <Button variant="primary" onPress={submitHandler}>
+        <Text>Login</Text>
+      </Button>
     </View>
   );
 };
@@ -97,13 +90,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 6,
-    fontSize: 16,
-  },
   rememberRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -113,17 +99,5 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 14,
     color: "#333",
-  },
-  loginButton: {
-    backgroundColor: "#e53935",
-    paddingVertical: 12,
-    borderRadius: 6,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  loginButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
   },
 });

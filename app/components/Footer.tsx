@@ -2,6 +2,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import COLORS from "../style/primaryColor";
 
 interface MenuItem {
   title: string;
@@ -41,7 +42,11 @@ const Footer = () => {
             }
           }}
         >
-          <MaterialIcons name={item.icon as any} size={24} color={"#333"} />
+          <MaterialIcons
+            name={item.icon as any}
+            size={24}
+            color={COLORS.primary}
+          />
           <Text style={styles.menuText}>{item.title}</Text>
         </TouchableOpacity>
       ))}
@@ -57,7 +62,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: "#ccc",
+    borderTopColor: COLORS.border,
+    backgroundColor: COLORS.background,
   },
   menuItem: {
     alignItems: "center",
@@ -65,6 +71,6 @@ const styles = StyleSheet.create({
   menuText: {
     marginTop: 4,
     fontSize: 12,
-    color: "#333",
+    color: COLORS.lightText,
   },
 });

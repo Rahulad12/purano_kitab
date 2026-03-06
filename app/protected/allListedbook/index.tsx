@@ -1,4 +1,5 @@
 import { useGetBooks } from "@/app/api/hooks/books";
+import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import globalStyles from "@/app/style/global";
@@ -6,7 +7,7 @@ import { BookDetails } from "@/app/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 
@@ -41,10 +42,9 @@ const AllBooks = () => {
               style={styles.bookCard}
               onPress={() => goToBook(book._id.toString())}
             >
-              <Image
-                source={{ uri: book.image_url || fallbackImg }}
-                style={styles.bookImage}
-                resizeMode="cover"
+              <BookImageWithSkeleton
+                uri={book.image_url || fallbackImg}
+                containerStyle={styles.bookImage}
               />
               <View style={styles.bookInfo}>
                 <Text numberOfLines={2}>{book.title}</Text>

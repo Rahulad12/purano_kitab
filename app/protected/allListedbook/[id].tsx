@@ -1,13 +1,14 @@
 import { useGetBookById } from "@/app/api/hooks/books";
 import Button from "@/app/components/ui/Button";
 import Card from "@/app/components/ui/Card";
+import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PageLayout from "@/app/components/ui/PageLayout";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import COLORS from "@/app/style/primaryColor";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-
+import { StyleSheet, Text, View } from "react-native";
+const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 const BookDetails = () => {
   const { id: bookId } = useLocalSearchParams();
   const { data: book } = useGetBookById(bookId as string);
@@ -31,12 +32,9 @@ const BookDetails = () => {
     >
       <Card style={styles.card}>
         {/* Book Cover */}
-        <Image
-          source={{
-            uri: book?.image_url || "https://via.placeholder.com/300x450.png",
-          }}
-          style={styles.image}
-          resizeMode="cover"
+        <BookImageWithSkeleton
+          uri={book.image_url || fallbackImg}
+          containerStyle={styles.image}
         />
 
         {/* Book Info */}

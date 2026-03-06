@@ -1,11 +1,17 @@
+import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import Card from "@/app/components/ui/Card";
+import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import globalStyles from "@/app/style/global";
+import { BookDetails } from "@/app/types";
 import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
-import books from "../../data/book";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 
-const FeaturedBooks = () => {
+interface Props {
+  books: BookDetails[];
+  isLoading: boolean;
+}
+const FeaturedBooks = ({ books, isLoading }: Props) => {
   return (
     <View style={globalStyles.container}>
       <Text style={globalStyles.subHeading}>Featured Books</Text>
@@ -15,19 +21,20 @@ const FeaturedBooks = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={globalStyles.scrollView}
       >
-        {books.map((book) => (
-          <Card key={book.id} style={styles.bookCard}>
-            <Image
-              source={{ uri: book.img || fallbackImg }}
-              style={styles.bookImage}
-              resizeMode="cover"
-            />
-            <View style={styles.bookInfo}>
-              <Text numberOfLines={1}>{book.title}</Text>
-              <Text style={globalStyles.priceText}>Rs. {book.price}</Text>
-            </View>
-          </Card>
-        ))}
+        {isLoading
+          ? [...Array(4)].map((_, index) => <CardSkeleton key={index} />)
+          : books?.map((book) => (
+              <Card key={book._id} style={styles.bookCard}>
+                <BookImageWithSkeleton
+                  uri={book.image_url || fallbackImg}
+                  containerStyle={styles.bookImage}
+                />
+                <View style={styles.bookInfo}>
+                  <Text numberOfLines={1}>{book.title}</Text>
+                  <Text style={globalStyles.priceText}>Rs. {book.price}</Text>
+                </View>
+              </Card>
+            ))}
       </ScrollView>
     </View>
   );

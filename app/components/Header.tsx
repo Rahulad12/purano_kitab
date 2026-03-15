@@ -1,12 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useAuth } from "../context/AuthContext";
 import globalStyles from "../style/global";
 import COLORS from "../style/primaryColor";
 
 const Header = () => {
-  const { user } = useAuth();
   return (
     <View style={[globalStyles.container]}>
       {/* Top Bar */}
@@ -17,7 +16,9 @@ const Header = () => {
           <TouchableOpacity onPress={() => alert("Notification pressed")}>
             <Ionicons name="notifications-outline" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => alert("Favorites pressed")}>
+          <TouchableOpacity
+            onPress={() => router.push("/protected/allListedbook/favorite")}
+          >
             <Ionicons name="heart-outline" size={24} color="black" />
           </TouchableOpacity>
         </View>

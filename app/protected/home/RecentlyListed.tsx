@@ -159,9 +159,10 @@ import {
 interface Props {
   books: BookDetails[];
   isLoading: boolean;
+  handleFavSave: (bookId: string) => void;
 }
 
-const RecentlyListed = ({ books, isLoading }: Props) => {
+const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
   const router = useRouter();
 
   return (
@@ -184,8 +185,8 @@ const RecentlyListed = ({ books, isLoading }: Props) => {
                   new Date(b.createdAt).getTime() -
                   new Date(a.createdAt).getTime(),
               )
-              .slice(0, 4)
-              .map((book) => (
+              ?.slice(0, 4)
+              ?.map((book) => (
                 <Card key={book._id} style={styles.bookCard}>
                   <BookImageWithSkeleton
                     uri={book.image_url}
@@ -211,7 +212,7 @@ const RecentlyListed = ({ books, isLoading }: Props) => {
                     </View>
 
                     <TouchableOpacity
-                      onPress={() => alert(`Liked ${book.title}`)}
+                      onPress={() => handleFavSave(book._id)}
                       style={styles.likeButton}
                     >
                       <Ionicons

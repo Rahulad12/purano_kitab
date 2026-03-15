@@ -1,4 +1,5 @@
 import { useGetBookById } from "@/app/api/hooks/books";
+import { useSaveBookAsFavorite } from "@/app/api/hooks/favorite";
 import Button from "@/app/components/ui/Button";
 import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
@@ -12,6 +13,17 @@ const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 const BookDetails = () => {
   const { id: bookId } = useLocalSearchParams();
   const { data: book } = useGetBookById(bookId as string);
+
+  const { mutateAsync: saveBook, isPending: isSaving } =
+    useSaveBookAsFavorite();
+  const handleBookSaveAsFavorite = async (bookId: string) => {
+    if (!bookId) return;
+    try {
+      await saveBook(bookId);
+    } catch (error) {
+      console.error("Error saving book as favorite:", error);
+    }
+  };
 
   // Fallback data if book not found
   if (!book) {
@@ -60,8 +72,11 @@ const BookDetails = () => {
         </View>
 
         {/* Action Button */}
-        <Button variant="ghost">
-          <Text>Add to Cart</Text>
+        <Button
+          variant="ghost"
+          onPress={() => handleBookSaveAsFavorite(bookId as string)}
+        >
+          <Text>{isSaving ? "Saving As Favorite" : "Add to Cart"}</Text>
         </Button>
       </Card>
     </PageScrollLayout>

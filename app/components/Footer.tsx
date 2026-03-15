@@ -22,9 +22,10 @@ const Footer = () => {
 
   const menuList: MenuItem[] = [
     { title: "Home", icon: "home", link: "/protected" },
-    { title: "Sell", icon: "add", link: "/sell" },
+    { title: "Sell", icon: "add", link: "/protected/sellbooks" },
     { title: "Chat", icon: "chat-bubble-outline", link: "/chat" },
     { title: "Profile", icon: "person-outline", link: "/protected/profile" },
+    { title: "Books", icon: "book", link: "/protected/allListedbook/by-user" },
     { title: "Logout", icon: "logout", onPress: handleLogout },
   ];
 

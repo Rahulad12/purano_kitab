@@ -1,8 +1,12 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-// Replace with your backend API URL
-const API_URL = "http://localhost:3000/api/v1";
+
+const node_env = process.env.NODE_ENV;
+const API_URL =
+  node_env === "development"
+    ? process.env.EXPO_PUBLIC_API_URL_DEV
+    : process.env.EXPO_PUBLIC_API_URL_PROD;
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

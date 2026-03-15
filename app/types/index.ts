@@ -1,3 +1,31 @@
+// create book dtos
+export interface CreateBookInformation {
+  title: string | undefined;
+  author?: string;
+  description?: string;
+  price: string;
+  image_url?: string;
+}
+
+export interface CreateBookResponse {
+  message: string;
+  success: boolean;
+  data: {
+    owner: string;
+    title: string;
+    author: string;
+    description: string;
+    price: string;
+    image_url: string;
+    isAvailable: boolean;
+    isSold: boolean;
+    _id: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+  };
+}
+
 export interface Book {
   id: string;
   seller: SellerInformation;
@@ -20,6 +48,12 @@ export interface BookDetails {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+export interface BookByUserResponseType {
+  message: string;
+  success: boolean;
+  books: BookDetails[];
 }
 export interface SellerInformation {
   _id: string;
@@ -47,4 +81,21 @@ export interface AuthResponse {
 export interface AuthRequest {
   email: string;
   password: string;
+}
+
+//favorite
+export interface BookSaveAsFavoriteResponse {
+  message: string;
+  success: boolean;
+}
+
+export interface GetALLSavedBooksResponse {
+  message: string;
+  success: boolean;
+  favorites: {
+    _id: string;
+    book: string;
+    user: string;
+    _v: number;
+  }[];
 }

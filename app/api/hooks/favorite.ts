@@ -18,8 +18,11 @@ export const useSaveBookAsFavorite = () => {
       Toast.show({ type: "success", text1: data.message });
     },
     onError: (error) => {
-      console.error("Error saving book as favorite:", error.message);
-      Toast.show({ type: "error", text1: error.message });
+      console.error("Error saving book as favorite:", error);
+      Toast.show({
+        type: "error",
+        text1: error?.message || "Something went wrong",
+      });
     },
   });
 };

@@ -17,7 +17,7 @@ const Login = () => {
     password: "",
     rememberMe: false,
   });
-  const { mutateAsync: loginUser } = useAuthUser();
+  const { mutateAsync: loginUser, isPending: loadingLogin } = useAuthUser();
   const submitHandler = async () => {
     try {
       await loginUser(formData);
@@ -64,7 +64,7 @@ const Login = () => {
 
       {/* Login Button */}
       <Button variant="primary" onPress={submitHandler}>
-        <Text>Login</Text>
+        <Text>{loadingLogin ? "Logging in..." : "Login"}</Text>
       </Button>
     </View>
   );

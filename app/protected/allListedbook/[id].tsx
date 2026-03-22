@@ -10,16 +10,17 @@ import { useLocalSearchParams } from "expo-router/build/hooks";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
+
 const BookDetails = () => {
   const { id: bookId } = useLocalSearchParams();
   const { data: book } = useGetBookById(bookId as string);
 
-  const { mutateAsync: saveBook, isPending: isSaving } =
+  const { mutateAsync: saveBookAsFavorite, isPending: isSaving } =
     useSaveBookAsFavorite();
   const handleBookSaveAsFavorite = async (bookId: string) => {
     if (!bookId) return;
     try {
-      await saveBook(bookId);
+      await saveBookAsFavorite(bookId);
     } catch (error) {
       console.error("Error saving book as favorite:", error);
     }

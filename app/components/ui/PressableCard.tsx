@@ -37,12 +37,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
 
     // Shadow for iOS
-    shadowColor: "#000",
+    shadowColor: "#1C1008",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-
-    // Shadow for Android
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
     elevation: 3,
     overflow: "hidden",
   },

@@ -1,13 +1,14 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import { logout } from "./hooks";
 
-const node_env = process.env.NODE_ENV;
+const nodeEnv = process.env.NODE_ENV;
 const API_URL =
-  node_env === "development"
+  nodeEnv === "development"
     ? process.env.EXPO_PUBLIC_API_URL_DEV
     : process.env.EXPO_PUBLIC_API_URL_PROD;
-
+console.log("API_URL", API_URL);
 const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
@@ -43,8 +44,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // const { logout: authLogout } = useAuth();
     if (error.response?.status === 401) {
-      // Handle unauthorized access
+      logout();
+      // authLogout();
     }
     return Promise.reject(error);
   },

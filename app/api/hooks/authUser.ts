@@ -78,7 +78,10 @@ export const useRegister = () => {
 // Logout function
 export const logout = async () => {
   try {
-    await SecureStore.deleteItemAsync("token");
+    await SecureStore.deleteItemAsync("access_token");
+    await SecureStore.deleteItemAsync("user");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
   } catch (error) {
     console.error("Logout error:", error);
   }

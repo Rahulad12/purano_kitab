@@ -8,6 +8,7 @@ export interface PageScrollLayoutProps {
   children: React.ReactNode;
   style?: ViewStyle | ViewStyle[];
   headerChildren?: React.ReactNode;
+  contentContainerStyle?: ViewStyle | ViewStyle[];
 }
 
 const PageScrollLayout = ({
@@ -16,13 +17,14 @@ const PageScrollLayout = ({
   children,
   style,
   headerChildren,
+  contentContainerStyle,
 }: PageScrollLayoutProps) => {
   const hasHeader = title || subtitle || headerChildren;
 
   return (
     <ScrollView
       style={[globalStyles.container, style]}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, contentContainerStyle]}
       showsVerticalScrollIndicator={false}
     >
       {hasHeader && (

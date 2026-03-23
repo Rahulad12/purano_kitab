@@ -37,7 +37,7 @@ export interface Book {
 }
 export interface BookDetails {
   _id: string;
-  owner: string;
+  owner: SellerInformation;
   title: string;
   author: string;
   description: string;
@@ -56,12 +56,12 @@ export interface BookByUserResponseType {
   books: BookDetails[];
 }
 export interface SellerInformation {
-  _id: string;
-  full_name: string;
-  address: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  phone: string;
-  website?: string;
+  id: string;
+  phoneNumber?: string;
+  isActive: boolean;
 }
 
 export interface User {
@@ -81,6 +81,7 @@ export interface AuthResponse {
 export interface AuthRequest {
   email: string;
   password: string;
+  phoneNumber?: string;
 }
 
 //favorite

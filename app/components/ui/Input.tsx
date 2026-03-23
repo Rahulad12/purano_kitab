@@ -1,4 +1,5 @@
 import COLORS from "@/app/style/primaryColor";
+import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -6,6 +7,7 @@ import {
   TextInput,
   TextInputProps,
   TextStyle,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
@@ -16,12 +18,15 @@ export interface InputProps extends TextInputProps {
   onChangeText: (text: string) => void;
   placeholder?: string;
   secureTextEntry?: boolean;
+  setSecureTextEntry?: (value: boolean) => void;
   keyboardType?: TextInputProps["keyboardType"];
   error?: string;
   containerStyle?: ViewStyle;
   labelStyle?: TextStyle;
   inputStyle?: TextStyle;
   errorStyle?: TextStyle;
+  setTogglePassword?: (value: boolean) => void;
+  togglePassword?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -30,6 +35,7 @@ const Input: React.FC<InputProps> = ({
   onChangeText,
   placeholder,
   secureTextEntry = false,
+  setSecureTextEntry,
   keyboardType = "default",
   error,
   containerStyle,
@@ -38,6 +44,8 @@ const Input: React.FC<InputProps> = ({
   errorStyle,
   onFocus,
   onBlur,
+  setTogglePassword,
+  togglePassword,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -72,6 +80,15 @@ const Input: React.FC<InputProps> = ({
         onBlur={handleBlur}
         {...rest}
       />
+      {secureTextEntry && setSecureTextEntry && (
+        <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
+          <Feather
+            name={secureTextEntry ? "eye-off" : "eye"}
+            size={20}
+            color="#94A3B8"
+          />
+        </TouchableOpacity>
+      )}
       {error && <Text style={[styles.error, errorStyle]}>{error}</Text>}
     </View>
   );

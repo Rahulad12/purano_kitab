@@ -1,10 +1,12 @@
+import { useGetFavorite } from "@/app/api/hooks/favorite";
 import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import Button from "@/app/components/ui/Button";
 import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import globalStyles from "@/app/style/global";
+import COLORS from "@/app/style/primaryColor";
 import { BookDetails } from "@/app/types";
-import { Ionicons } from "@expo/vector-icons";
+import { Fontisto } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
@@ -23,6 +25,12 @@ interface Props {
 
 const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
   const router = useRouter();
+  const { data: favoriteBooks } = useGetFavorite();
+
+  // ✅ Returns the matched favorite object or undefined
+  const isFavorite = (bookId: string) => {
+    return favoriteBooks?.favorites?.find((book) => book.book === bookId);
+  };
 
   return (
     <View style={globalStyles.container}>
@@ -33,64 +41,66 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
         contentContainerStyle={{ paddingBottom: 16 }}
       >
         {isLoading
-          ? // Show 4 skeleton cards while loading the list
-            [...Array(4)].map((_, index) => (
+          ? [...Array(4)].map((_, index) => (
               <CardSkeleton key={index} cardWidth={"95%"} />
             ))
-          : // Show actual books, sorted and limited to 4
-            books
+          : books
               ?.sort(
                 (a, b) =>
                   new Date(b.createdAt).getTime() -
                   new Date(a.createdAt).getTime(),
               )
               ?.slice(0, 4)
-              ?.map((book) => (
-                <Card key={book._id} style={styles.bookCard}>
-                  <BookImageWithSkeleton
-                    uri={book.image_url}
-                    containerStyle={styles.bookImage}
-                  />
+              ?.map((book) => {
+                const favorited = !!isFavorite(book._id);
+                return (
+                  <Card key={book._id} style={styles.bookCard}>
+                    {/* Book Image */}
+                    <BookImageWithSkeleton
+                      uri={book.image_url}
+                      containerStyle={styles.bookImage}
+                    />
 
-                  <View style={styles.cardContent}>
-                    <View style={styles.textGroup}>
-                      <Text style={globalStyles.paragraph} numberOfLines={1}>
-                        {book.title}
-                      </Text>
-                      <Text
-                        style={{
-                          ...globalStyles.paragraph,
-                          fontWeight: "bold",
-                        }}
+                    {/* Content */}
+                    <View style={styles.cardContent}>
+                      <View style={styles.textGroup}>
+                        <Text style={styles.bookTitle} numberOfLines={1}>
+                          {book.title}
+                        </Text>
+                        <Text style={styles.bookAuthor} numberOfLines={1}>
+                          {book.author}
+                        </Text>
+                        <Text style={styles.bookPrice}>Rs. {book.price}</Text>
+                      </View>
+
+                      {/* Fixed: single Fontisto, no redundant if/else */}
+                      <TouchableOpacity
+                        style={[
+                          styles.favButton,
+                          favorited && styles.favButtonActive,
+                        ]}
+                        onPress={() => handleFavSave(book._id)}
+                        disabled={favorited}
+                        activeOpacity={0.7}
                       >
-                        {book.author}
-                      </Text>
-                      <Text style={globalStyles.priceText}>
-                        Rs. {book.price}
-                      </Text>
+                        <Fontisto
+                          name={favorited ? "heart" : "heart-alt"}
+                          size={18}
+                          color={favorited ? "#fff" : COLORS.text}
+                        />
+                      </TouchableOpacity>
                     </View>
+                  </Card>
+                );
+              })}
 
-                    <TouchableOpacity
-                      onPress={() => handleFavSave(book._id)}
-                      style={styles.likeButton}
-                    >
-                      <Ionicons
-                        name="heart-outline"
-                        size={20}
-                        color="#ff4444"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </Card>
-              ))}
-
-        {/* View All Button */}
+        {/* View All */}
         <Button
           style={styles.viewAllButton}
           variant="link"
           onPress={() => router.push("/protected/allListedbook")}
         >
-          <Text style={globalStyles.paragraph}>View All</Text>
+          <Text style={globalStyles.paragraph}>View All →</Text>
         </Button>
       </ScrollView>
     </View>
@@ -98,20 +108,18 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 16,
-    backgroundColor: "#fff",
-    flex: 1,
-  },
   bookCard: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 12,
   },
   bookImage: {
-    width: 70,
-    height: 100,
-    borderRadius: 6,
+    width: 72,
+    height: 104,
+    borderRadius: 8,
     backgroundColor: "#eee",
   },
   cardContent: {
@@ -121,15 +129,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textGroup: {
-    flexShrink: 1,
+    flex: 1,
+    paddingRight: 10,
+    gap: 3,
   },
-  likeButton: {
-    padding: 6,
-    borderRadius: 20,
-    backgroundColor: "#fce4ec",
+  bookTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: COLORS.text,
   },
+  bookAuthor: {
+    fontSize: 12,
+    color: COLORS.lightText,
+  },
+  bookPrice: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: COLORS.price,
+    marginTop: 4,
+  },
+
+  // ✅ Heart button with active state
+  favButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F1F5F9",
+  },
+  favButtonActive: {
+    backgroundColor: COLORS.primary,
+  },
+
   viewAllButton: {
     alignItems: "center",
+    marginTop: 4,
   },
 });
 

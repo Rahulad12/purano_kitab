@@ -259,7 +259,7 @@ export default function BookLoader() {
       </View>
 
       {/* Title */}
-      <Text style={styles.title}>OldLeaf Books</Text>
+      <Text style={styles.title}>Purano Kitab</Text>
       <Text style={styles.subtitle}>— Est. in the Age of Ink & Paper —</Text>
 
       {/* Loading phrase */}

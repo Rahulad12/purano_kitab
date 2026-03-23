@@ -5,7 +5,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import globalStyles from "../style/global";
 import COLORS from "../style/primaryColor";
 
-const Header = () => {
+interface HeaderProps {
+  onProfilePress?: () => void;
+}
+
+const Header = ({ onProfilePress }: HeaderProps) => {
   return (
     <View style={[globalStyles.container]}>
       {/* Top Bar */}
@@ -20,6 +24,13 @@ const Header = () => {
             onPress={() => router.push("/protected/allListedbook/favorite")}
           >
             <Ionicons name="heart-outline" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onProfilePress}>
+            <Ionicons
+              name="person-circle-outline"
+              size={28}
+              color={COLORS.primary}
+            />
           </TouchableOpacity>
         </View>
       </View>

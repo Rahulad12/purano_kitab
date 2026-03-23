@@ -1,85 +1,205 @@
 import { useGetBookById } from "@/app/api/hooks/books";
-import { useSaveBookAsFavorite } from "@/app/api/hooks/favorite";
-import Button from "@/app/components/ui/Button";
+import {
+  useGetFavorite,
+  useSaveBookAsFavorite,
+} from "@/app/api/hooks/favorite";
+import BookLoader from "@/app/components/common/Loader";
 import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PageLayout from "@/app/components/ui/PageLayout";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import COLORS from "@/app/style/primaryColor";
+import Entypo from "@expo/vector-icons/Entypo";
+import Fontisto from "@expo/vector-icons/Fontisto";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 
 const BookDetails = () => {
   const { id: bookId } = useLocalSearchParams();
-  const { data: book } = useGetBookById(bookId as string);
-
+  const { data: book, isLoading: isLoadingBook } = useGetBookById(
+    bookId as string,
+  );
   const { mutateAsync: saveBookAsFavorite, isPending: isSaving } =
     useSaveBookAsFavorite();
+  const { data: favoriteBooks, isLoading: isLoadingFavorites } =
+    useGetFavorite();
+  const isBookSetAsFavorite = favoriteBooks?.favorites.find(
+    (favorite) => favorite.book === bookId,
+  );
+  const [isFavorited, setIsFavorited] = useState(false);
+
   const handleBookSaveAsFavorite = async (bookId: string) => {
-    if (!bookId) return;
+    if (!bookId || isSaving) return;
     try {
       await saveBookAsFavorite(bookId);
+      setIsFavorited(true);
     } catch (error) {
       console.error("Error saving book as favorite:", error);
     }
   };
 
-  // Fallback data if book not found
+  if (isLoadingBook) return <BookLoader />;
+
   if (!book) {
     return (
       <PageLayout title="Book Details" subtitle="Book not found">
         <View style={styles.notFound}>
-          <Text>Sorry, the book you're looking for doesn't exist.</Text>
+          <Text style={styles.notFoundText}>
+            Sorry, the book you're looking for doesn't exist.
+          </Text>
         </View>
       </PageLayout>
     );
   }
 
+  // Replace these with actual seller fields from your book object
+  const sellerName =
+    book?.owner.firstName + " " + book?.owner.lastName || "Unknown Seller";
+  const sellerPhone = book?.owner.phoneNumber || null;
+  const sellerEmail = book?.owner.email || null;
+  const isSellerActive = book?.owner.isActive || false;
+
   return (
-    <PageScrollLayout
-      title={book?.title}
-      subtitle={`by ${book?.author}`}
-      style={styles.container}
-    >
-      <Card style={styles.card}>
-        {/* Book Cover */}
+    <PageScrollLayout style={styles.container}>
+      {/* ── Full-width hero image ── */}
+      <View style={styles.heroWrapper}>
         <BookImageWithSkeleton
           uri={book.image_url || fallbackImg}
-          containerStyle={styles.image}
+          containerStyle={styles.heroImage}
         />
 
-        {/* Book Info */}
-        <View style={styles.infoSection}>
-          <Text style={styles.title}>{book?.title}</Text>
-          <Text style={styles.author}>by {book?.author}</Text>
+        {/* Favorite pill — top right */}
+        <TouchableOpacity
+          style={[styles.favButton, isFavorited && styles.favButtonActive]}
+          onPress={() => handleBookSaveAsFavorite(bookId as string)}
+          activeOpacity={0.8}
+          disabled={!!isBookSetAsFavorite || isSaving}
+        >
+          <Text style={styles.favIcon}>
+            {isSaving ? (
+              "⏳"
+            ) : isBookSetAsFavorite ? (
+              <Fontisto name="favorite" size={24} color="green" />
+            ) : (
+              <Fontisto
+                name="favorite"
+                size={24}
+                color="black"
+                lineBreakMode="clip"
+              />
+            )}
+          </Text>
+          <Text style={styles.favLabel}>
+            {isBookSetAsFavorite ? "Saved" : "Save"}
+          </Text>
+        </TouchableOpacity>
 
-          {/* Rating & Genre Row */}
-          {/* <View style={styles.row}>
-            <View style={styles.ratingContainer}>
-              <Text style={styles.rating}>★ {rating.toFixed(1)}</Text>
-            </View>
-            <Text style={styles.genre}>{genre}</Text>
-            <Text style={styles.pages}>{pages} pages</Text>
-          </View> */}
+        {/* Price badge — bottom left of image */}
+        <View style={styles.priceBadge}>
+          <Text style={styles.priceText}>Rs. {book?.price}</Text>
+        </View>
+      </View>
 
-          {/* Price */}
-          <Text style={styles.price}>Rs. {book?.price}</Text>
-
-          {/* Description */}
-          <Text style={styles.descriptionLabel}>Description</Text>
-          <Text style={styles.description}>{book?.description}</Text>
+      {/* ── Main content ── */}
+      <View style={styles.content}>
+        {/* Title + author */}
+        <View style={styles.titleRow}>
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>{book?.title}</Text>
+            <Text style={styles.author}>by {book?.author}</Text>
+          </View>
+          <View style={styles.stockBadge}>
+            <Text style={styles.stockText}>
+              {book?.isAvailable ? "In Stock" : "Out of Stock"}
+            </Text>
+          </View>
         </View>
 
-        {/* Action Button */}
-        <Button
-          variant="ghost"
-          onPress={() => handleBookSaveAsFavorite(bookId as string)}
-        >
-          <Text>{isSaving ? "Saving As Favorite" : "Add to Cart"}</Text>
-        </Button>
-      </Card>
+        <View style={styles.divider} />
+
+        {/* Description */}
+        <Card style={styles.sectionCard}>
+          <Text style={styles.sectionLabel}>About this book</Text>
+          <Text style={styles.description}>{book?.description}</Text>
+        </Card>
+
+        {/* Seller info */}
+        <Card style={styles.sectionCard}>
+          <Text style={styles.sectionLabel}>Seller Information</Text>
+
+          <View style={styles.sellerRow}>
+            <View style={styles.sellerAvatar}>
+              <Text style={styles.sellerAvatarText}>
+                {sellerName.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.sellerName}>{sellerName}</Text>
+              <Text style={styles.sellerSub}>
+                {isSellerActive ? "Verified Seller" : "Unverified Seller"}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.contactRow}>
+            {sellerPhone && (
+              <TouchableOpacity
+                style={styles.contactBtn}
+                onPress={() => Linking.openURL(`tel:${sellerPhone}`)}
+                activeOpacity={0.8}
+              >
+                <Entypo name="phone" size={20} color={COLORS.primary} />
+                <Text style={styles.contactText}>{sellerPhone}</Text>
+              </TouchableOpacity>
+            )}
+            {sellerEmail && (
+              <TouchableOpacity
+                style={styles.contactBtn}
+                onPress={() => Linking.openURL(`mailto:${sellerEmail}`)}
+                activeOpacity={0.8}
+              >
+                <Fontisto name="email" size={24} color="black" />
+                <Text style={styles.contactText}>{sellerEmail}</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </Card>
+
+        {/* Bottom CTA */}
+        <View style={styles.ctaRow}>
+          <TouchableOpacity
+            style={[styles.ctaBtn, styles.ctaSecondary]}
+            onPress={() => handleBookSaveAsFavorite(bookId as string)}
+            disabled={isSaving || !!isBookSetAsFavorite}
+            activeOpacity={0.8}
+          >
+            <Fontisto
+              name={isBookSetAsFavorite ? "heart" : "heart-alt"}
+              size={20}
+              color={isBookSetAsFavorite ? COLORS.primary : COLORS.text}
+            />
+            <Text style={styles.ctaSecondaryText}>
+              {isBookSetAsFavorite ? "Saved" : "Wishlist"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.ctaBtn, styles.ctaPrimary]}
+            onPress={() => sellerPhone && Linking.openURL(`tel:${sellerPhone}`)}
+            activeOpacity={0.8}
+          >
+            <Entypo name="phone" size={20} color={"#fff"} />
+          </TouchableOpacity>
+        </View>
+      </View>
     </PageScrollLayout>
   );
 };
@@ -89,98 +209,218 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  card: {
-    padding: 16,
-    borderRadius: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    backgroundColor: COLORS.background,
-    marginBottom: 16,
-  },
-  image: {
+
+  // ── Hero image ──
+  heroWrapper: {
+    position: "relative",
     width: "100%",
-    height: 350,
-    borderRadius: 12,
-    marginBottom: 20,
+    marginBottom: 0,
+  },
+  heroImage: {
+    width: "100%",
+    height: 420,
+    borderRadius: 0,
     backgroundColor: "#f0f0f0",
   },
-  infoSection: {
-    marginBottom: 24,
+  favButton: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(255,255,255,0.93)",
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  favButtonActive: {
+    backgroundColor: "#FFF0F0",
+  },
+  favIcon: {
+    fontSize: 16,
+  },
+  favLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.text,
+  },
+  priceBadge: {
+    position: "absolute",
+    bottom: 14,
+    left: 14,
+    backgroundColor: COLORS.price,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  priceText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+
+  // ── Content ──
+  content: {
+    paddingTop: 20,
+    paddingBottom: 32,
+  },
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 12,
+  },
+  titleBlock: {
+    flex: 1,
+    paddingRight: 12,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "700",
-    color: COLORS.text,
+    color: COLORS.secondary,
+    lineHeight: 30,
     marginBottom: 4,
   },
   author: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.lightText,
-    marginBottom: 12,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
+  stockBadge: {
+    backgroundColor: COLORS.primary + "20",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+  },
+  stockText: {
+    fontSize: 12,
+    color: COLORS.primary,
+    fontWeight: "600",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#E2E8F0",
     marginBottom: 16,
   },
-  ratingContainer: {
-    backgroundColor: "#FFE4C4",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+
+  // ── Section cards ──
+  sectionCard: {
+    padding: 16,
+    width: "100%",
     borderRadius: 8,
-    marginRight: 12,
   },
-  rating: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#B25D00",
-  },
-  genre: {
-    fontSize: 14,
-    color: COLORS.lightText,
-    marginRight: 12,
-  },
-  pages: {
-    fontSize: 14,
-    color: COLORS.lightText,
-  },
-  price: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: COLORS.price,
-    marginBottom: 20,
-  },
-  descriptionLabel: {
-    fontSize: 18,
+  sectionLabel: {
+    fontSize: 13,
     fontWeight: "600",
     color: COLORS.text,
-    marginBottom: 8,
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+    marginBottom: 10,
   },
   description: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 24,
     color: COLORS.lightText,
   },
-  button: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: 14,
-    borderRadius: 30,
+
+  // ── Seller ──
+  sellerRow: {
+    flexDirection: "row",
     alignItems: "center",
+    gap: 12,
+    marginBottom: 14,
+  },
+  sellerAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.primary + "22",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sellerAvatarText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: COLORS.primary,
+  },
+  sellerName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: COLORS.text,
+  },
+  sellerSub: {
+    fontSize: 12,
+    color: "#14b464",
+    marginTop: 2,
+  },
+  contactRow: {
+    gap: 8,
+  },
+  contactBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#F1F5F9",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  contactIcon: {
+    fontSize: 16,
+  },
+  contactText: {
+    fontSize: 14,
+    color: COLORS.text,
+    fontWeight: "500",
+  },
+
+  // ── CTA row ──
+  ctaRow: {
+    flexDirection: "row",
+    gap: 10,
     marginTop: 8,
   },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
+  ctaBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ctaPrimary: {
+    backgroundColor: COLORS.primary,
+  },
+  ctaPrimaryText: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  ctaSecondary: {
+    backgroundColor: "#F1F5F9",
+  },
+  ctaSecondaryText: {
+    color: COLORS.text,
+    fontSize: 15,
     fontWeight: "600",
   },
+
+  // ── Not found ──
   notFound: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  notFoundText: {
+    fontSize: 15,
+    color: COLORS.lightText,
+    textAlign: "center",
   },
 });
 

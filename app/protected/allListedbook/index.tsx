@@ -1,4 +1,5 @@
 import { useGetBooks } from "@/app/api/hooks/books";
+import BookLoader from "@/app/components/common/Loader";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
@@ -12,10 +13,12 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 
 const AllBooks = () => {
-  const { data: books } = useGetBooks();
-  console.log(books);
+  const { data: books, isLoading: booksLoading } = useGetBooks();
+
   const goToBook = (id: string) =>
     router.push(`/protected/allListedbook/${id}`);
+
+  if (booksLoading) return <BookLoader />;
 
   return (
     <PageScrollLayout title="All Listed Books" subtitle="Find all Listed books">

@@ -1,11 +1,20 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
+
 import { useRegister } from "../api/hooks/authUser";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
+import PageScrollLayout from "../components/ui/PageScrollLayout";
 import { useAuth } from "../context/AuthContext";
+import COLORS from "../style/primaryColor";
 
 const Register = () => {
   const router = useRouter();
@@ -14,15 +23,42 @@ const Register = () => {
     firstName: "",
     lastName: "",
     email: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
 
-  const { mutateAsync: registerUser } = useRegister();
+  const { mutateAsync: registerUser, isPending } = useRegister();
+
+  const update = (field: string) => (value: string) =>
+    setFormData((prev) => ({ ...prev, [field]: value }));
 
   const submitHandler = async () => {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.password
+    ) {
+      Toast.show({
+        type: "error",
+        text1: "Please fill all required fields",
+      });
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       Toast.show({ type: "error", text1: "Passwords do not match" });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      Toast.show({
+        type: "error",
+        text1: "Password must be at least 6 characters",
+      });
       return;
     }
 
@@ -31,6 +67,7 @@ const Register = () => {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
+        phoneNumber: formData.phoneNumber,
         password: formData.password,
       });
       Toast.show({ type: "success", text1: "Registration successful" });
@@ -40,71 +77,136 @@ const Register = () => {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: `Registration failed: ${error.response?.data?.message || "Unknown error"}`,
+        text1: "Registration failed",
+        text2: error.response?.data?.message || "Unknown error",
       });
     }
   };
 
   return (
-    <View style={styles.wrapper}>
-      <Text style={styles.label}>First Name</Text>
-      <Input
-        placeholder="Enter your first name"
-        value={formData.firstName}
-        onChangeText={(value) => setFormData({ ...formData, firstName: value })}
-      />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <PageScrollLayout>
+        <View style={styles.container}>
+          {/* Name row */}
+          <View style={styles.row}>
+            <View style={styles.halfField}>
+              <Input
+                labelStyle={styles.label}
+                label="First Name"
+                placeholder="Jane"
+                value={formData.firstName}
+                onChangeText={update("firstName")}
+                autoCapitalize="words"
+              />
+            </View>
+            <View style={styles.halfField}>
+              <Input
+                labelStyle={styles.label}
+                label="Last Name"
+                placeholder="Doe"
+                value={formData.lastName}
+                onChangeText={update("lastName")}
+                autoCapitalize="words"
+              />
+            </View>
+          </View>
 
-      <Text style={styles.label}>Last Name</Text>
-      <Input
-        placeholder="Enter your last name"
-        value={formData.lastName}
-        onChangeText={(value) => setFormData({ ...formData, lastName: value })}
-      />
+          <View style={styles.divider} />
 
-      <Text style={styles.label}>Email</Text>
-      <Input
-        placeholder="Enter your email"
-        value={formData.email}
-        onChangeText={(value) => setFormData({ ...formData, email: value })}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+          {/* Email */}
+          <Input
+            labelStyle={styles.label}
+            label="Email Address"
+            placeholder="jane@example.com"
+            value={formData.email}
+            onChangeText={update("email")}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
 
-      <Text style={styles.label}>Password</Text>
-      <Input
-        placeholder="Enter your password"
-        value={formData.password}
-        onChangeText={(value) => setFormData({ ...formData, password: value })}
-        secureTextEntry
-      />
+          {/* Phone */}
+          <Input
+            labelStyle={styles.label}
+            label="Phone Number"
+            placeholder="+1 (555) 000-0000"
+            value={formData.phoneNumber}
+            onChangeText={update("phoneNumber")}
+            keyboardType="phone-pad"
+          />
 
-      <Text style={styles.label}>Confirm Password</Text>
-      <Input
-        placeholder="Confirm your password"
-        value={formData.confirmPassword}
-        onChangeText={(value) =>
-          setFormData({ ...formData, confirmPassword: value })
-        }
-        secureTextEntry
-      />
+          <View style={styles.divider} />
 
-      <Button variant="primary" onPress={submitHandler}>
-        <Text>Register</Text>
-      </Button>
-    </View>
+          {/* Password */}
+          <Input
+            labelStyle={styles.label}
+            label="Password"
+            placeholder="Min. 6 characters"
+            value={formData.password}
+            onChangeText={update("password")}
+            secureTextEntry={showPassword}
+          />
+
+          {/* Confirm Password */}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Input
+              labelStyle={styles.label}
+              label="Confirm Password"
+              placeholder="Re-enter password"
+              value={formData.confirmPassword}
+              onChangeText={update("confirmPassword")}
+              secureTextEntry={!showConfirmPassword}
+              setSecureTextEntry={setShowConfirmPassword}
+            />
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* Submit */}
+          <Button
+            variant="primary"
+            onPress={submitHandler}
+            disabled={isPending}
+          >
+            <Text>{isPending ? "Creating account…" : "Create Account"}</Text>
+          </Button>
+        </View>
+      </PageScrollLayout>
+    </KeyboardAvoidingView>
   );
 };
 
 export default Register;
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     flex: 1,
-    padding: 20,
+    padding: 16,
+  },
+  row: {
+    flexDirection: "row",
     gap: 12,
   },
+  halfField: {
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginVertical: 16,
+  },
+  fieldGap: {
+    marginTop: 14,
+  },
   label: {
-    fontSize: 14,
-    color: "#555",
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.lightText,
+    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
   },
 });

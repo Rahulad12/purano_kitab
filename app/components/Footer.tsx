@@ -1,7 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useAuth } from "../context/AuthContext";
 import COLORS from "../style/primaryColor";
 
 interface MenuItem {
@@ -13,12 +12,12 @@ interface MenuItem {
 
 const Footer = () => {
   const router = useRouter();
-  const { logout } = useAuth();
+  // const { logout } = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
-    router.push("/");
-  };
+  // const handleLogout = async () => {
+  //   await logout();
+  //   router.push("/");
+  // };
 
   const menuList: MenuItem[] = [
     { title: "Home", icon: "home", link: "/protected" },
@@ -26,7 +25,7 @@ const Footer = () => {
     { title: "Chat", icon: "chat-bubble-outline", link: "/chat" },
     { title: "Profile", icon: "person-outline", link: "/protected/profile" },
     { title: "Books", icon: "book", link: "/protected/allListedbook/by-user" },
-    { title: "Logout", icon: "logout", onPress: handleLogout },
+    // { title: "Logout", icon: "logout", onPress: handleLogout },
   ];
 
   return (

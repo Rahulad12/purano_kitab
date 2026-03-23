@@ -7,7 +7,7 @@ import {
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
-import axiosInstance from "../client";
+import axiosInstance from "../axiosInstance";
 
 export const useGetBooks = () => {
   return useQuery({

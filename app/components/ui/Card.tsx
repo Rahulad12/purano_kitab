@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 8,
     marginVertical: 8,
-    marginHorizontal: 8,
+    // marginHorizontal: 8,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
 
     // Shadow for Android
-    elevation: 3,
+    // elevation: 3,
 
     overflow: "hidden",
   },

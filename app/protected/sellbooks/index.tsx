@@ -15,10 +15,18 @@ const SellBooks = () => {
     image_url: "",
   });
 
-  const { mutateAsync: createBook } = useCreateBooks();
+  const { mutateAsync: createBook, isPending: isCreatingBook } =
+    useCreateBooks();
   const handleFormSubmit = async () => {
     try {
       await createBook(formData as CreateBookInformation);
+      setFormData({
+        title: "",
+        price: "",
+        author: "",
+        description: "",
+        image_url: "",
+      });
     } catch (error) {
       console.error(error);
     }
@@ -64,9 +72,12 @@ const SellBooks = () => {
       />
 
       <View>
-        <Button variant={"primary"} onPress={handleFormSubmit}>
-          {" "}
-          List Book
+        <Button
+          variant={"primary"}
+          onPress={handleFormSubmit}
+          disabled={isCreatingBook}
+        >
+          {isCreatingBook ? "Listing..." : "List Book"}
         </Button>
       </View>
     </PageScrollLayout>

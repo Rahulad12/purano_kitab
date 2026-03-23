@@ -5,7 +5,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
-import axiosInstance from "../client";
+import axiosInstance from "../axiosInstance";
 
 export const useSaveBookAsFavorite = () => {
   return useMutation({
@@ -18,10 +18,13 @@ export const useSaveBookAsFavorite = () => {
       Toast.show({ type: "success", text1: data.message });
     },
     onError: (error) => {
-      console.error("Error saving book as favorite:", error);
+      console.log(
+        "Error saving book as favorite:",
+        (error as any).response?.data?.message,
+      );
       Toast.show({
         type: "error",
-        text1: error?.message || "Something went wrong",
+        text1: (error as any).response?.data?.message,
       });
     },
   });

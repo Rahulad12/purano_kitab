@@ -1,11 +1,13 @@
 import { useGetBookById } from "@/app/api/hooks/books";
 import { useGetFavorite } from "@/app/api/hooks/favorite";
+import BookLoader from "@/app/components/common/Loader";
 import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import COLORS from "@/app/style/primaryColor";
+import { router } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 const FavoriteBookCard = ({ bookId }: { bookId: string }) => {
   const { data: book, isLoading } = useGetBookById(bookId);
@@ -21,7 +23,12 @@ const FavoriteBookCard = ({ bookId }: { bookId: string }) => {
   if (!book) return null;
 
   return (
-    <PressableCard style={styles.card}>
+    <PressableCard
+      style={styles.card}
+      onPress={() => {
+        router.push(`/protected/allListedbook/${book._id}`);
+      }}
+    >
       <Image
         source={{ uri: book.image_url }}
         style={styles.bookCover}
@@ -79,12 +86,7 @@ const SavedAsFavorite = () => {
       {/* Header */}
 
       {/* Loading State */}
-      {isLoading && (
-        <View style={styles.centerBox}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Loading favorites…</Text>
-        </View>
-      )}
+      {isLoading && <BookLoader />}
 
       {/* Empty State */}
       {!isLoading && favorites.length === 0 && (

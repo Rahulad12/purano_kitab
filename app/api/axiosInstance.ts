@@ -1,14 +1,12 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
-import { logout } from "./hooks";
+import { clearStorage } from "./auth.service.config.helper";
 
 const nodeEnv = process.env.NODE_ENV;
 const API_URL =
   nodeEnv === "development"
     ? process.env.EXPO_PUBLIC_API_URL_DEV
     : process.env.EXPO_PUBLIC_API_URL_PROD;
-console.log("API_URL", API_URL);
 const axiosInstance = axios.create({
   baseURL: API_URL,
   timeout: 10000,
@@ -21,12 +19,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (config) => {
     try {
-      let token = "";
-      if (Platform.OS === "web") {
-        token = localStorage.getItem("access_token") as string;
-      } else {
-        token = (await SecureStore.getItemAsync("access_token")) as string;
-      }
+      const token = await SecureStore.getItemAsync("access_token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -44,10 +37,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // const { logout: authLogout } = useAuth();
     if (error.response?.status === 401) {
-      logout();
-      // authLogout();
+      clearStorage();
     }
     return Promise.reject(error);
   },

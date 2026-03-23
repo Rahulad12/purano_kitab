@@ -1,13 +1,20 @@
 import { useGetBookByUser } from "@/app/api/hooks/books";
+import BookLoader from "@/app/components/common/Loader";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import { BookDetails } from "@/app/types";
+import { router } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 const ListedBookCard = ({ book }: { book: BookDetails }) => {
   return (
-    <PressableCard style={styles.card}>
+    <PressableCard
+      style={styles.card}
+      onPress={() => {
+        router.push(`/protected/allListedbook/${book._id}`);
+      }}
+    >
       <Image
         source={{ uri: book.image_url }}
         style={styles.bookCover}
@@ -76,12 +83,7 @@ const ListedByUser = () => {
       }
     >
       {/* Loading State */}
-      {isLoading && (
-        <View style={styles.centerBox}>
-          <ActivityIndicator size="large" color="#B07D4A" />
-          <Text style={styles.loadingText}>Loading your listings…</Text>
-        </View>
-      )}
+      {isLoading && <BookLoader />}
 
       {/* Empty State */}
       {!isLoading && books.length === 0 && (

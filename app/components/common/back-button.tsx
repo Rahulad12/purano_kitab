@@ -1,12 +1,15 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import Button from "../ui/Button";
 
 const BackButton = () => {
+  const router = useRouter();
+
   return (
     <Button
       variant="link"
       onPress={() => {
-        window.history.back();
+        router.back();
       }}
     >
       Back

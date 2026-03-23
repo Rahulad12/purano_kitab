@@ -1,37 +1,29 @@
 import { useAuth } from "@/app/context/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation } from "@tanstack/react-query";
-import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
 import Toast from "react-native-toast-message";
 import { AuthRequest, AuthResponse } from "../../types";
-import axiosInstance from "../client";
+import {
+  clearStorage,
+  setStoredUser,
+  setToken,
+} from "../auth.service.config.helper";
+import axiosInstance from "../axiosInstance";
 
 export const useAuthUser = () => {
   const { setUser, setIsLoggedIn } = useAuth();
+
   return useMutation({
     mutationFn: async (credentials: AuthRequest) => {
       const response = await axiosInstance.post<AuthResponse>(
         "/auth/login",
         credentials,
       );
-      if (Platform.OS === "web") {
-        localStorage.setItem("access_token", response.data.accessToken);
-      } else {
-        await SecureStore.setItemAsync(
-          "access_token",
-          response.data?.accessToken,
-        );
-      }
+      await setToken(response.data.accessToken);
       return response.data?.user;
     },
     onSuccess: async (data) => {
       if (data) {
-        if (Platform.OS === "web") {
-          localStorage.setItem("user", JSON.stringify(data));
-        } else {
-          await AsyncStorage.setItem("user", JSON.stringify(data));
-        }
+        await setStoredUser(data);
         setUser(data);
         setIsLoggedIn(true);
         Toast.show({ type: "success", text1: "Login successful" });
@@ -48,7 +40,8 @@ export const useAuthUser = () => {
   });
 };
 
-// Register mutation
+// ─── Register ──────────────────────────────────────────────────────────────────
+
 export const useRegister = () => {
   return useMutation({
     mutationFn: async (
@@ -58,15 +51,7 @@ export const useRegister = () => {
         "/auth/register",
         credentials,
       );
-
-      if (Platform.OS === "web") {
-        localStorage.setItem("access_token", response.data.accessToken);
-      } else {
-        await SecureStore.setItemAsync(
-          "access_token",
-          response.data.accessToken,
-        );
-      }
+      await setToken(response.data.accessToken);
       return response.data;
     },
     onError: (error) => {
@@ -75,13 +60,11 @@ export const useRegister = () => {
   });
 };
 
-// Logout function
+// ─── Logout ────────────────────────────────────────────────────────────────────
+
 export const logout = async () => {
   try {
-    await SecureStore.deleteItemAsync("access_token");
-    await SecureStore.deleteItemAsync("user");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("user");
+    await clearStorage();
   } catch (error) {
     console.error("Logout error:", error);
   }

@@ -1,7 +1,7 @@
-import { useGetLoggedInUserDetails } from "@/app/api/hooks/user";
 import Avatar from "@/app/components/common/Avatar";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import { useAuth } from "@/app/context/AuthContext";
+import { usePuranoContext } from "@/app/context/use-context/use-purano-context";
 import COLORS from "@/app/style/primaryColor";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -10,7 +10,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Profile = () => {
   const { logout } = useAuth();
-  const { data: user } = useGetLoggedInUserDetails();
+  const { user } = usePuranoContext();
   const router = useRouter();
 
   type SettingItem = {

@@ -1,6 +1,9 @@
-import { SafeAreaView, ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, View } from "react-native";
 import { useGetBooks } from "../api/hooks/books";
 import { useSaveBookAsFavorite } from "../api/hooks/favorite";
+import { useGetLoggedInUserDetails } from "../api/hooks/user";
+import { usePuranoContext } from "../context/use-context/use-purano-context";
 import FeaturedBooks from "./home/FeaturedBooks";
 import Hero from "./home/Hero";
 import RecentlyListed from "./home/RecentlyListed";
@@ -16,8 +19,19 @@ const Home = () => {
       console.error("Error saving book as favorite:", error);
     }
   };
+
+  const { setUser } = usePuranoContext();
+  const { data: loggedInUser, isFetching: isLoadingUser } =
+    useGetLoggedInUserDetails();
+
+  useEffect(() => {
+    if (loggedInUser && !isLoadingUser) {
+      setUser(loggedInUser);
+    }
+  }, [loggedInUser, isLoadingUser, setUser]);
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
@@ -30,7 +44,7 @@ const Home = () => {
           handleFavSave={handleBookSaveAsFavorite}
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

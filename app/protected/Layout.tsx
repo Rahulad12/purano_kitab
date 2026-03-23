@@ -1,9 +1,10 @@
 // app/Layout.tsx (or wherever it's saved)
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ProfileDrawer from "../components/ProfileDrawer";
+import { PuranoKitabProvider } from "../context/puranokitab-context";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,15 +22,17 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header onProfilePress={openProfileDrawer} />
-      <View style={{ flex: 1 }}>{children}</View>
-      <Footer />
-      <ProfileDrawer
-        isVisible={isProfileDrawerVisible}
-        onClose={closeProfileDrawer}
-      />
-    </SafeAreaView>
+    <PuranoKitabProvider>
+      <View style={styles.container}>
+        <Header onProfilePress={openProfileDrawer} />
+        <View style={{ flex: 1 }}>{children}</View>
+        <Footer />
+        <ProfileDrawer
+          isVisible={isProfileDrawerVisible}
+          onClose={closeProfileDrawer}
+        />
+      </View>
+    </PuranoKitabProvider>
   );
 };
 

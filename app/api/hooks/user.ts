@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
 import { ChangeEmailDto, ChangePasswordDto, User } from "../../types";
@@ -39,6 +39,7 @@ export const useChangePassword = () => {
 };
 
 export const useChangeEmail = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (changeEmailRequest: ChangeEmailDto) => {
       return axiosInstance.post("/users/change-email", changeEmailRequest);
@@ -48,6 +49,7 @@ export const useChangeEmail = () => {
         type: "success",
         text1: data.data.message,
       });
+      queryClient.invalidateQueries({ queryKey: ["loggedInUserDetails"] });
     },
     onError: (error: any) => {
       console.log("Error changing email", error);
@@ -55,6 +57,7 @@ export const useChangeEmail = () => {
         type: "error",
         text1: error.response?.data?.message || "Error changing email",
       });
+      queryClient.invalidateQueries({ queryKey: ["loggedInUserDetails"] });
     },
   });
 };

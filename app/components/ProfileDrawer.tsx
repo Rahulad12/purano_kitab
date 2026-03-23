@@ -13,6 +13,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { usePuranoContext } from "../context/use-context/use-purano-context";
 import Avatar from "./common/Avatar";
 
 const { width } = Dimensions.get("window");
@@ -32,7 +33,8 @@ type MenuItem = {
 };
 
 const ProfileDrawer = ({ isVisible, onClose }: ProfileDrawerProps) => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { user } = usePuranoContext();
   const router = useRouter();
   const slideAnim = React.useRef(new Animated.Value(width)).current;
   const fadeAnim = React.useRef(new Animated.Value(0)).current;

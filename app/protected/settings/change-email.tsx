@@ -1,15 +1,16 @@
+import { useChangeEmail } from "@/app/api/hooks/user";
+import Input from "@/app/components/ui/Input";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import { useAuth } from "@/app/context/AuthContext";
 import COLORS from "@/app/style/primaryColor";
+import { ChangeEmailDto } from "@/app/types";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -17,40 +18,51 @@ import {
 const ChangeEmailScreen = () => {
   const { user } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState(user?.email || "");
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<ChangeEmailDto>({
+    email: "",
+    password: "",
+  });
+  const { mutateAsync: changeEmail, isPending: emailChanging } =
+    useChangeEmail();
 
   const handleSave = async () => {
-    setIsLoading(true);
-    // TODO: Implement API call to update email
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert("Success", "Email updated successfully");
-      router.back();
-    }, 1000);
+    await changeEmail(formData);
+    router.back();
   };
 
   return (
     <PageScrollLayout title="Change Email" subtitle="Update your email address">
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <Feather name="mail" size={20} color={COLORS.primary} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Enter new email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
+        <Input
+          style={styles.input}
+          placeholder="Enter new email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={formData.email}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, email: text }))
+          }
+          leftIcon={<Feather name="mail" size={20} color={COLORS.primary} />}
+        />
+
+        <Input
+          style={styles.input}
+          placeholder="Enter password"
+          autoCapitalize="none"
+          secureTextEntry
+          value={formData.password}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, password: text }))
+          }
+          leftIcon={<Feather name="lock" size={20} color={COLORS.primary} />}
+        />
 
         <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+          style={[styles.button, emailChanging && styles.buttonDisabled]}
           onPress={handleSave}
-          disabled={isLoading}
+          disabled={emailChanging}
         >
-          {isLoading ? (
+          {emailChanging ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.buttonText}>Save Changes</Text>

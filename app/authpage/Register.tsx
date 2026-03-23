@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 
+import { Feather } from "@expo/vector-icons";
 import { useRegister } from "../api/hooks/authUser";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
@@ -28,7 +29,7 @@ const Register = () => {
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { mutateAsync: registerUser, isPending } = useRegister();
 
@@ -89,91 +90,104 @@ const Register = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <PageScrollLayout>
-        <View style={styles.container}>
-          {/* Name row */}
-          <View style={styles.row}>
-            <View style={styles.halfField}>
-              <Input
-                labelStyle={styles.label}
-                label="First Name"
-                placeholder="Jane"
-                value={formData.firstName}
-                onChangeText={update("firstName")}
-                autoCapitalize="words"
-              />
-            </View>
-            <View style={styles.halfField}>
-              <Input
-                labelStyle={styles.label}
-                label="Last Name"
-                placeholder="Doe"
-                value={formData.lastName}
-                onChangeText={update("lastName")}
-                autoCapitalize="words"
-              />
-            </View>
-          </View>
-
-          <View style={styles.divider} />
-
-          {/* Email */}
-          <Input
-            labelStyle={styles.label}
-            label="Email Address"
-            placeholder="jane@example.com"
-            value={formData.email}
-            onChangeText={update("email")}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-
-          {/* Phone */}
-          <Input
-            labelStyle={styles.label}
-            label="Phone Number"
-            placeholder="+1 (555) 000-0000"
-            value={formData.phoneNumber}
-            onChangeText={update("phoneNumber")}
-            keyboardType="phone-pad"
-          />
-
-          <View style={styles.divider} />
-
-          {/* Password */}
-          <Input
-            labelStyle={styles.label}
-            label="Password"
-            placeholder="Min. 6 characters"
-            value={formData.password}
-            onChangeText={update("password")}
-            secureTextEntry={showPassword}
-          />
-
-          {/* Confirm Password */}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+        {/* Name row */}
+        <View style={styles.row}>
+          <View style={styles.halfField}>
             <Input
               labelStyle={styles.label}
-              label="Confirm Password"
-              placeholder="Re-enter password"
-              value={formData.confirmPassword}
-              onChangeText={update("confirmPassword")}
-              secureTextEntry={!showConfirmPassword}
-              setSecureTextEntry={setShowConfirmPassword}
+              label="First Name"
+              placeholder="Jane"
+              value={formData.firstName}
+              onChangeText={update("firstName")}
+              autoCapitalize="words"
+              required
+              leftIcon={
+                <Feather name="user" size={20} color={COLORS.primary} />
+              }
             />
           </View>
-
-          <View style={styles.divider} />
-
-          {/* Submit */}
-          <Button
-            variant="primary"
-            onPress={submitHandler}
-            disabled={isPending}
-          >
-            <Text>{isPending ? "Creating account…" : "Create Account"}</Text>
-          </Button>
+          <View style={styles.halfField}>
+            <Input
+              labelStyle={styles.label}
+              label="Last Name"
+              placeholder="Doe"
+              value={formData.lastName}
+              onChangeText={update("lastName")}
+              autoCapitalize="words"
+              required
+              leftIcon={
+                <Feather name="user" size={20} color={COLORS.primary} />
+              }
+            />
+          </View>
         </View>
+
+        <View style={styles.divider} />
+
+        {/* Email */}
+        <Input
+          labelStyle={styles.label}
+          label="Email Address"
+          placeholder="jane@example.com"
+          value={formData.email}
+          onChangeText={update("email")}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          required
+          leftIcon={<Feather name="mail" size={20} color={COLORS.primary} />}
+        />
+
+        {/* Phone */}
+        <Input
+          labelStyle={styles.label}
+          label="Phone Number"
+          placeholder="+1 (555) 000-0000"
+          value={formData.phoneNumber}
+          onChangeText={update("phoneNumber")}
+          keyboardType="phone-pad"
+          leftIcon={<Feather name="phone" size={20} color={COLORS.primary} />}
+          required
+        />
+
+        <View style={styles.divider} />
+
+        {/* Password */}
+        <Input
+          labelStyle={styles.label}
+          label="Password"
+          placeholder="Min. 6 characters"
+          value={formData.password}
+          onChangeText={update("password")}
+          secureTextEntry={!showPassword}
+          togglePassword={showPassword}
+          setTogglePassword={setShowPassword}
+          required
+          leftIcon={<Feather name="lock" size={20} color={COLORS.primary} />}
+        />
+
+        {/* Confirm Password */}
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Input
+            labelStyle={styles.label}
+            label="Confirm Password"
+            placeholder="Re-enter password"
+            value={formData.confirmPassword}
+            onChangeText={update("confirmPassword")}
+            secureTextEntry={!showConfirmPassword}
+            togglePassword={showConfirmPassword}
+            setTogglePassword={setShowConfirmPassword}
+            required
+            leftIcon={<Feather name="lock" size={20} color={COLORS.primary} />}
+          />
+        </View>
+
+        <View style={styles.divider} />
+
+        {/* Submit */}
+        <Button variant="primary" onPress={submitHandler} disabled={isPending}>
+          <Text>{isPending ? "Creating account…" : "Create Account"}</Text>
+        </Button>
       </PageScrollLayout>
     </KeyboardAvoidingView>
   );
@@ -182,13 +196,9 @@ const Register = () => {
 export default Register;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
   row: {
     flexDirection: "row",
-    gap: 12,
+    gap: 8,
   },
   halfField: {
     flex: 1,

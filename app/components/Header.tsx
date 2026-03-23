@@ -1,7 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useGetFavorite } from "../api/hooks/favorite";
 import globalStyles from "../style/global";
 import COLORS from "../style/primaryColor";
 
@@ -10,6 +11,7 @@ interface HeaderProps {
 }
 
 const Header = ({ onProfilePress }: HeaderProps) => {
+  const { data: favoriteData } = useGetFavorite();
   return (
     <View style={[globalStyles.container]}>
       {/* Top Bar */}
@@ -17,13 +19,45 @@ const Header = ({ onProfilePress }: HeaderProps) => {
         <Text style={styles.logoText}>PuranoKitab</Text>
 
         <View style={styles.rightContainer}>
-          <TouchableOpacity onPress={() => alert("Notification pressed")}>
+          {/* <TouchableOpacity onPress={() => alert("Notification pressed")}>
             <Ionicons name="notifications-outline" size={24} color="black" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => router.push("/protected/allListedbook/favorite")}
+            style={{
+              position: "relative",
+            }}
           >
-            <Ionicons name="heart-outline" size={24} color="black" />
+            {/* <Ionicons
+              name="heart-outline"
+              size={24}
+              color={
+                favoriteData && favoriteData?.favorites?.length > 0
+                  ? "red"
+                  : "black"
+              }
+            /> */}
+            {favoriteData && favoriteData?.favorites?.length > 0 ? (
+              <MaterialIcons
+                name="favorite"
+                size={24}
+                color={COLORS.secondary}
+              />
+            ) : (
+              <MaterialIcons name="favorite" size={24} color="black" />
+            )}
+            <Text
+              style={{
+                position: "absolute",
+                right: -2,
+                top: -17,
+                color: COLORS.primary,
+                fontWeight: 800,
+                fontSize: 15,
+              }}
+            >
+              {favoriteData?.favorites.length}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onProfilePress}>
             <Ionicons

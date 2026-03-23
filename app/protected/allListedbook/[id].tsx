@@ -3,6 +3,7 @@ import {
   useGetFavorite,
   useSaveBookAsFavorite,
 } from "@/app/api/hooks/favorite";
+import Avatar from "@/app/components/common/Avatar";
 import BookLoader from "@/app/components/common/Loader";
 import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
@@ -87,7 +88,7 @@ const BookDetails = () => {
             {isSaving ? (
               "⏳"
             ) : isBookSetAsFavorite ? (
-              <Fontisto name="favorite" size={24} color="green" />
+              <Fontisto name="favorite" size={24} color={COLORS.secondary} />
             ) : (
               <Fontisto
                 name="favorite"
@@ -97,9 +98,7 @@ const BookDetails = () => {
               />
             )}
           </Text>
-          <Text style={styles.favLabel}>
-            {isBookSetAsFavorite ? "Saved" : "Save"}
-          </Text>
+          <Text style={styles.favLabel}></Text>
         </TouchableOpacity>
 
         {/* Price badge — bottom left of image */}
@@ -136,11 +135,16 @@ const BookDetails = () => {
           <Text style={styles.sectionLabel}>Seller Information</Text>
 
           <View style={styles.sellerRow}>
-            <View style={styles.sellerAvatar}>
-              <Text style={styles.sellerAvatarText}>
-                {sellerName.charAt(0).toUpperCase()}
-              </Text>
-            </View>
+            <Avatar
+              firstName={book.owner.firstName || ""}
+              style={{
+                width: 50,
+                height: 50,
+              }}
+              textStyle={{
+                fontSize: 25,
+              }}
+            />
             <View>
               <Text style={styles.sellerName}>{sellerName}</Text>
               <Text style={styles.sellerSub}>
@@ -184,7 +188,7 @@ const BookDetails = () => {
             <Fontisto
               name={isBookSetAsFavorite ? "heart" : "heart-alt"}
               size={20}
-              color={isBookSetAsFavorite ? COLORS.primary : COLORS.text}
+              color={isBookSetAsFavorite ? COLORS.secondary : COLORS.text}
             />
             <Text style={styles.ctaSecondaryText}>
               {isBookSetAsFavorite ? "Saved" : "Wishlist"}
@@ -340,14 +344,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: COLORS.primary + "22",
+    backgroundColor: COLORS.primary + "10",
     alignItems: "center",
     justifyContent: "center",
   },
   sellerAvatarText: {
     fontSize: 18,
     fontWeight: "700",
-    color: COLORS.primary,
+    color: COLORS.secondary,
   },
   sellerName: {
     fontSize: 15,
@@ -356,7 +360,7 @@ const styles = StyleSheet.create({
   },
   sellerSub: {
     fontSize: 12,
-    color: "#14b464",
+    color: COLORS.primary,
     marginTop: 2,
   },
   contactRow: {
@@ -403,6 +407,8 @@ const styles = StyleSheet.create({
   },
   ctaSecondary: {
     backgroundColor: "#F1F5F9",
+    flexDirection: "row",
+    gap: 8,
   },
   ctaSecondaryText: {
     color: COLORS.text,

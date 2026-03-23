@@ -1,20 +1,16 @@
+import { useGetLoggedInUserDetails } from "@/app/api/hooks/user";
+import Avatar from "@/app/components/common/Avatar";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import { useAuth } from "@/app/context/AuthContext";
 import COLORS from "@/app/style/primaryColor";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Profile = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { data: user } = useGetLoggedInUserDetails();
   const router = useRouter();
 
   type SettingItem = {
@@ -84,10 +80,11 @@ const Profile = () => {
       {/* ── Profile Card ── */}
       <View style={styles.profileCard}>
         <View style={styles.avatarWrapper}>
-          <Image
+          {/* <Image
             source={require("../../../assets/images/logo.png")}
             style={styles.avatar}
-          />
+          /> */}
+          <Avatar firstName={user?.firstName || ""} />
           <View style={styles.onlineDot} />
         </View>
 
@@ -206,6 +203,9 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     borderWidth: 3,
     borderColor: COLORS.primary + "33",
+    backgroundColor: COLORS.primary + "10",
+    alignItems: "center",
+    justifyContent: "center",
   },
   onlineDot: {
     position: "absolute",

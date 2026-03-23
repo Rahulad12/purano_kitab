@@ -75,10 +75,7 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
 
                       {/* Fixed: single Fontisto, no redundant if/else */}
                       <TouchableOpacity
-                        style={[
-                          styles.favButton,
-                          favorited && styles.favButtonActive,
-                        ]}
+                        style={[styles.favButton]}
                         onPress={() => handleFavSave(book._id)}
                         disabled={favorited}
                         activeOpacity={0.7}
@@ -86,7 +83,9 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
                         <Fontisto
                           name={favorited ? "heart" : "heart-alt"}
                           size={18}
-                          color={favorited ? "#fff" : COLORS.text}
+                          color={
+                            favorited ? COLORS.secondary : COLORS.lightText
+                          }
                         />
                       </TouchableOpacity>
                     </View>
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F5F9",
   },
   favButtonActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.border,
   },
 
   viewAllButton: {

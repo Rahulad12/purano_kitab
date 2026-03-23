@@ -1,11 +1,10 @@
+import { useChangePassword } from "@/app/api/hooks/user";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import COLORS from "@/app/style/primaryColor";
 import { Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -14,32 +13,21 @@ import {
 } from "react-native";
 
 const ChangePasswordScreen = () => {
-  const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const { mutateAsync: changePassword, isPending: passwordChanging } =
+    useChangePassword();
   const handleSave = async () => {
-    if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "New passwords do not match");
-      return;
-    }
-    if (newPassword.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
-      return;
-    }
-
-    setIsLoading(true);
-    // TODO: Implement API call to update password
-    setTimeout(() => {
-      setIsLoading(false);
-      Alert.alert("Success", "Password updated successfully");
-      router.back();
-    }, 1000);
+    await changePassword({
+      currentPassword,
+      newPassword,
+      confirmNewPassword: confirmPassword,
+    });
   };
 
   return (
@@ -47,7 +35,12 @@ const ChangePasswordScreen = () => {
       <View style={styles.container}>
         {/* Current Password */}
         <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={COLORS.primary} style={styles.icon} />
+          <Feather
+            name="lock"
+            size={20}
+            color={COLORS.primary}
+            style={styles.icon}
+          />
           <TextInput
             style={styles.input}
             placeholder="Current password"
@@ -56,13 +49,22 @@ const ChangePasswordScreen = () => {
             onChangeText={setCurrentPassword}
           />
           <TouchableOpacity onPress={() => setShowCurrent(!showCurrent)}>
-            <Feather name={showCurrent ? "eye-off" : "eye"} size={20} color="#94A3B8" />
+            <Feather
+              name={showCurrent ? "eye-off" : "eye"}
+              size={20}
+              color="#94A3B8"
+            />
           </TouchableOpacity>
         </View>
 
         {/* New Password */}
         <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={COLORS.primary} style={styles.icon} />
+          <Feather
+            name="lock"
+            size={20}
+            color={COLORS.primary}
+            style={styles.icon}
+          />
           <TextInput
             style={styles.input}
             placeholder="New password"
@@ -71,13 +73,22 @@ const ChangePasswordScreen = () => {
             onChangeText={setNewPassword}
           />
           <TouchableOpacity onPress={() => setShowNew(!showNew)}>
-            <Feather name={showNew ? "eye-off" : "eye"} size={20} color="#94A3B8" />
+            <Feather
+              name={showNew ? "eye-off" : "eye"}
+              size={20}
+              color="#94A3B8"
+            />
           </TouchableOpacity>
         </View>
 
         {/* Confirm Password */}
         <View style={styles.inputContainer}>
-          <Feather name="lock" size={20} color={COLORS.primary} style={styles.icon} />
+          <Feather
+            name="lock"
+            size={20}
+            color={COLORS.primary}
+            style={styles.icon}
+          />
           <TextInput
             style={styles.input}
             placeholder="Confirm new password"
@@ -86,16 +97,20 @@ const ChangePasswordScreen = () => {
             onChangeText={setConfirmPassword}
           />
           <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-            <Feather name={showConfirm ? "eye-off" : "eye"} size={20} color="#94A3B8" />
+            <Feather
+              name={showConfirm ? "eye-off" : "eye"}
+              size={20}
+              color="#94A3B8"
+            />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+          style={[styles.button, passwordChanging && styles.buttonDisabled]}
           onPress={handleSave}
-          disabled={isLoading}
+          disabled={passwordChanging}
         >
-          {isLoading ? (
+          {passwordChanging ? (
             <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.buttonText}>Update Password</Text>

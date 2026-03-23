@@ -6,7 +6,6 @@ import React from "react";
 import {
   Animated,
   Dimensions,
-  Image,
   Modal,
   StyleSheet,
   Text,
@@ -14,6 +13,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import Avatar from "./common/Avatar";
 
 const { width } = Dimensions.get("window");
 const DRAWER_WIDTH = width * 0.85;
@@ -83,13 +83,16 @@ const ProfileDrawer = ({ isVisible, onClose }: ProfileDrawerProps) => {
 
   const menuItems: MenuItem[] = [
     { icon: "user", label: "My Profile", route: "/protected/profile" },
-    { icon: "book", label: "My Books", route: "/protected/allListedbook/by-user" },
-    { icon: "heart", label: "Favorites", route: "/protected/allListedbook/favorite" },
-    { icon: "shopping-bag", label: "Sell Books", route: "/protected/sellbooks" },
-    { icon: "phone", label: "Change Phone", route: "/protected/settings/change-phone" },
-    { icon: "mail", label: "Change Email", route: "/protected/settings/change-email" },
-    { icon: "lock", label: "Update Password", route: "/protected/settings/change-password" },
-    { icon: "log-out", label: "Logout", danger: true, onPress: handleLogout },
+    {
+      icon: "book",
+      label: "My Books",
+      route: "/protected/allListedbook/by-user",
+    },
+    {
+      icon: "heart",
+      label: "Favorites",
+      route: "/protected/allListedbook/favorite",
+    },
   ];
 
   return (
@@ -107,46 +110,15 @@ const ProfileDrawer = ({ isVisible, onClose }: ProfileDrawerProps) => {
 
         {/* Drawer */}
         <Animated.View
-          style={[
-            styles.drawer,
-            { transform: [{ translateX: slideAnim }] },
-          ]}
+          style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Feather name="x" size={24} color="#1E293B" />
-            </TouchableOpacity>
-          </View>
-
           {/* Profile Card */}
           <View style={styles.profileCard}>
-            <Image
-              source={require("../../assets/images/logo.png")}
-              style={styles.avatar}
-            />
+            <Avatar firstName={user?.firstName || ""} />
             <Text style={styles.name}>
               {user?.firstName} {user?.lastName}
             </Text>
             <Text style={styles.email}>{user?.email}</Text>
-
-            {/* Stats */}
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>12</Text>
-                <Text style={styles.statLabel}>Listed</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>5</Text>
-                <Text style={styles.statLabel}>Sold</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statValue}>8</Text>
-                <Text style={styles.statLabel}>Favorites</Text>
-              </View>
-            </View>
           </View>
 
           {/* Menu Items */}
@@ -176,7 +148,10 @@ const ProfileDrawer = ({ isVisible, onClose }: ProfileDrawerProps) => {
                   />
                 </View>
                 <Text
-                  style={[styles.menuLabel, item.danger && styles.menuLabelDanger]}
+                  style={[
+                    styles.menuLabel,
+                    item.danger && styles.menuLabelDanger,
+                  ]}
                 >
                   {item.label}
                 </Text>
@@ -223,21 +198,15 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 10,
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    padding: 16,
-    paddingTop: 50,
-  },
+
   closeButton: {
     padding: 8,
   },
   profileCard: {
-    backgroundColor: COLORS.primary + "10",
     margin: 16,
     borderRadius: 16,
-    padding: 20,
-    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E2E8F0",
   },
   avatar: {
     width: 80,

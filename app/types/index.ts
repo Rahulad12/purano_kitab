@@ -68,8 +68,10 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  id: string;
+  _id: string;
   phoneNumber?: string;
+  isActive: boolean;
+  isDeleted: boolean;
 }
 
 export interface AuthResponse {
@@ -99,4 +101,15 @@ export interface GetALLSavedBooksResponse {
     user: string;
     _v: number;
   }[];
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+export interface ChangeEmailDto {
+  email: string;
+  password: string;
 }

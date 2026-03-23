@@ -1,38 +1,34 @@
 import { useGetBooks } from "@/app/api/hooks/books";
 import BookLoader from "@/app/components/common/Loader";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
+import Input from "@/app/components/ui/Input";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import globalStyles from "@/app/style/global";
 import { BookDetails } from "@/app/types";
-import { Ionicons } from "@expo/vector-icons";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { router } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-
+import { StyleSheet, Text, View } from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 
 const AllBooks = () => {
   const { data: books, isLoading: booksLoading } = useGetBooks();
 
-  const goToBook = (id: string) =>
+  const goToBook = (id: string) => {
     router.push(`/protected/allListedbook/${id}`);
+  };
 
   if (booksLoading) return <BookLoader />;
 
   return (
     <PageScrollLayout title="All Listed Books" subtitle="Find all Listed books">
       <View style={styles.searchContainer}>
-        <Ionicons
-          name="search-outline"
-          size={20}
-          color="#999"
-          style={styles.searchIcon}
-        />
-        <TextInput
+        <Input
           placeholder="Search Books..."
-          style={styles.searchInput}
-          placeholderTextColor="#666"
+          onChangeText={() => {}}
+          value=""
+          rightIcon={<EvilIcons name="search" size={24} color="black" />}
         />
       </View>
       {books?.length === 0 ? (
@@ -76,13 +72,6 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginTop: 12,
-    marginBottom: 8,
-    borderWidth: 2,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    paddingHorizontal: 12,
   },
   searchIcon: {
     marginRight: 8,

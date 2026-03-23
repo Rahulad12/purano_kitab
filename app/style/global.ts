@@ -1,32 +1,30 @@
 import { StyleSheet } from "react-native";
+import COLORS from "./primaryColor";
 
-export const globalStyles = StyleSheet.create({
+const globalStyles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingVertical: 10,
+    backgroundColor: COLORS.background,
   },
 
   heading: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#F86624",
+    color: COLORS.primary,
   },
   subHeading: {
     fontSize: 22,
     fontWeight: "700",
-    color: "#4a3938",
-    // color: "#6B0504",
+    color: COLORS.secondary,
     marginBottom: 10,
   },
   paragraph: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#7E8287",
+    color: COLORS.lightText,
   },
-  smallText: {
-    fontSize: 12,
-    color: "#eb4034",
-  },
+  priceText: { fontSize: 12, color: COLORS.price },
   link: {
     color: "#007bff",
     textDecorationLine: "underline",
@@ -44,3 +42,5 @@ export const globalStyles = StyleSheet.create({
   },
   scrollView: {},
 });
+
+export default globalStyles;

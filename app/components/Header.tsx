@@ -1,58 +1,114 @@
-import { Ionicons } from '@expo/vector-icons'
-import React from 'react'
-import {
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native'
-import { globalStyles } from '../style/global'
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useGetFavorite } from "../api/hooks/favorite";
+import globalStyles from "../style/global";
+import COLORS from "../style/primaryColor";
 
-const Header = () => {
-    const buttonText = [
-        { text: 'Academic', onPress: () => alert('Academic pressed') },
-        { text: 'Fiction', onPress: () => alert('Fiction pressed') },
-        { text: 'Non-Fiction', onPress: () => alert('Non-Fiction pressed') },
-        { text: 'Entrance Exam', onPress: () => alert('Entrance Exam pressed') },
-        { text: 'Others', onPress: () => alert('Others pressed') },
-    ]
-
-    return (
-        <View style={{ ...globalStyles.container, marginTop: 25 }}>
-            {/* Top Bar */}
-            <View style={styles.topBar}>
-                <Text style={globalStyles.heading}>PuranoKitab</Text>
-
-                <View style={styles.iconRow}>
-                    <TouchableOpacity onPress={() => alert('Notification pressed')}>
-                        <Ionicons name="notifications-outline" size={24} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => alert('Favorites pressed')} style={styles.iconSpacing}>
-                        <Ionicons name="heart-outline" size={24} color="black" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
-    )
+interface HeaderProps {
+  onProfilePress?: () => void;
 }
 
+const Header = ({ onProfilePress }: HeaderProps) => {
+  const { data: favoriteData } = useGetFavorite();
+  return (
+    <View style={[globalStyles.container]}>
+      {/* Top Bar */}
+      <View style={styles.topBar}>
+        <Text style={styles.logoText}>PuranoKitab</Text>
+
+        <View style={styles.rightContainer}>
+          {/* <TouchableOpacity onPress={() => alert("Notification pressed")}>
+            <Ionicons name="notifications-outline" size={24} color="black" />
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={() => router.push("/protected/allListedbook/favorite")}
+            style={{
+              position: "relative",
+            }}
+          >
+            {/* <Ionicons
+              name="heart-outline"
+              size={24}
+              color={
+                favoriteData && favoriteData?.favorites?.length > 0
+                  ? "red"
+                  : "black"
+              }
+            /> */}
+            {favoriteData && favoriteData?.favorites?.length > 0 ? (
+              <MaterialIcons
+                name="favorite"
+                size={24}
+                color={COLORS.secondary}
+              />
+            ) : (
+              <MaterialIcons name="favorite" size={24} color="black" />
+            )}
+            <Text
+              style={{
+                position: "absolute",
+                right: -2,
+                top: -17,
+                color: COLORS.primary,
+                fontWeight: 800,
+                fontSize: 15,
+              }}
+            >
+              {favoriteData?.favorites.length}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onProfilePress}>
+            <Ionicons
+              name="person-circle-outline"
+              size={28}
+              color={COLORS.primary}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
-    topBar: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingBottom: 10,
-        borderBottomWidth: 1,
-        borderColor: '#eee',
-    },
-    iconRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    iconSpacing: {
-        marginLeft: 16,
-    },
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+  rightContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: COLORS.primary,
+  },
+  categoryScroll: {
+    marginTop: 12,
+  },
+  categoryContainer: {
+    paddingHorizontal: 4,
+  },
+  categoryButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 12,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+  },
+  categoryText: {
+    fontSize: 14,
+    color: "#333",
+    fontWeight: "500",
+  },
+});
 
-})
-
-export default Header
+export default Header;

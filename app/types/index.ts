@@ -109,7 +109,8 @@ export interface ChangePasswordDto {
   confirmNewPassword: string;
 }
 
-export interface ChangeEmailDto {
+export interface ChangeEmailOrPhoneDto {
   email: string;
+  phone: string;
   password: string;
 }

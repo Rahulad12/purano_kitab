@@ -9,11 +9,41 @@ import { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
 import axiosInstance from "../axiosInstance";
 
-export const useGetBooks = () => {
+export interface GetBooksParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  author?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export const useGetBooks = (params?: GetBooksParams) => {
+  const {
+    page = 1,
+    limit = 10,
+    search,
+    author,
+    minPrice,
+    maxPrice,
+  } = params || {};
+
   return useQuery({
-    queryKey: ["books"],
+    queryKey: ["books", { page, limit, search, author, minPrice, maxPrice }],
     queryFn: async () => {
-      const response = await axiosInstance.get("/books");
+      const queryParams = new URLSearchParams();
+      queryParams.append("page", String(page));
+      queryParams.append("limit", String(limit));
+      if (search) queryParams.append("search", search);
+      if (author) queryParams.append("author", author);
+      if (minPrice !== undefined)
+        queryParams.append("minPrice", String(minPrice));
+      if (maxPrice !== undefined)
+        queryParams.append("maxPrice", String(maxPrice));
+
+      const response = await axiosInstance.get(
+        `/books?${queryParams.toString()}`,
+      );
       return response.data;
     },
   });

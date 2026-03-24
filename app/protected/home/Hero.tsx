@@ -1,7 +1,8 @@
 import Input from "@/app/components/ui/Input";
 import globalStyles from "@/app/style/global";
 import { EvilIcons } from "@expo/vector-icons";
-import React from "react";
+import { router } from "expo-router";
+import React, { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -11,6 +12,16 @@ import {
 } from "react-native";
 
 const Hero = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(
+        `/protected/allListedbook?search=${encodeURIComponent(searchQuery.trim())}`,
+      );
+    }
+  };
+
   const buttonText = [
     { text: "Academic", onPress: () => alert("Academic pressed") },
     { text: "Fiction", onPress: () => alert("Fiction pressed") },
@@ -25,12 +36,11 @@ const Hero = () => {
       <View style={styles.searchContainer}>
         <Input
           placeholder="Search Books..."
-          onChangeText={() => {}}
-          value=""
+          onChangeText={setSearchQuery}
+          value={searchQuery}
           rightIcon={<EvilIcons name="search" size={24} color="black" />}
-          onRightIconPress={() => {
-            alert("pressedddddd");
-          }}
+          onRightIconPress={handleSearch}
+          onSubmitEditing={handleSearch}
         />
       </View>
 

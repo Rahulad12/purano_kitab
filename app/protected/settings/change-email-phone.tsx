@@ -1,32 +1,27 @@
-import { useChangeEmail } from "@/app/api/hooks/user";
+import { useChangeEmailOrPhone } from "@/app/api/hooks/user";
 import Input from "@/app/components/ui/Input";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
-import { useAuth } from "@/app/context/AuthContext";
+import { usePuranoContext } from "@/app/context/use-context/use-purano-context";
 import COLORS from "@/app/style/primaryColor";
-import { ChangeEmailDto } from "@/app/types";
+import { ChangeEmailOrPhoneDto } from "@/app/types";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ChangeEmailScreen = () => {
-  const { user } = useAuth();
+  const { user } = usePuranoContext();
   const router = useRouter();
-  const [formData, setFormData] = useState<ChangeEmailDto>({
-    email: "",
+  const [formData, setFormData] = useState<ChangeEmailOrPhoneDto>({
+    email: user?.email || "",
+    phone: user?.phoneNumber || "",
     password: "",
   });
-  const { mutateAsync: changeEmail, isPending: emailChanging } =
-    useChangeEmail();
+  const { mutateAsync: changeEmailOrPhone, isPending: emailOrPhoneChanging } =
+    useChangeEmailOrPhone();
 
   const handleSave = async () => {
-    await changeEmail(formData);
+    await changeEmailOrPhone(formData);
     router.back();
   };
 
@@ -47,6 +42,18 @@ const ChangeEmailScreen = () => {
 
         <Input
           style={styles.input}
+          placeholder="Enter new phone number"
+          keyboardType="phone-pad"
+          autoCapitalize="none"
+          value={formData.phone}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, phone: text }))
+          }
+          leftIcon={<Feather name="phone" size={20} color={COLORS.primary} />}
+        />
+
+        <Input
+          style={styles.input}
           placeholder="Enter password"
           autoCapitalize="none"
           secureTextEntry
@@ -58,12 +65,12 @@ const ChangeEmailScreen = () => {
         />
 
         <TouchableOpacity
-          style={[styles.button, emailChanging && styles.buttonDisabled]}
+          style={[styles.button, emailOrPhoneChanging && styles.buttonDisabled]}
           onPress={handleSave}
-          disabled={emailChanging}
+          disabled={emailOrPhoneChanging}
         >
-          {emailChanging ? (
-            <ActivityIndicator color="#fff" />
+          {emailOrPhoneChanging ? (
+            <Text style={styles.buttonText}>Saving...</Text>
           ) : (
             <Text style={styles.buttonText}>Save Changes</Text>
           )}

@@ -27,16 +27,10 @@ const Profile = () => {
       group: "Account",
       items: [
         {
-          icon: "phone",
-          label: "Change Phone Number",
-          sub: user?.phoneNumber ?? "Not set",
-          route: "/protected/settings/change-phone",
-        },
-        {
           icon: "mail",
-          label: "Change Email",
+          label: "Change Email & Phone",
           sub: user?.email ?? "Not set",
-          route: "/protected/settings/change-email",
+          route: "/protected/settings/change-email-phone",
         },
         {
           icon: "lock",

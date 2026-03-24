@@ -1,34 +1,73 @@
-import { useGetBooks } from "@/app/api/hooks/books";
-import BookLoader from "@/app/components/common/Loader";
+import { GetBooksParams, useGetBooks } from "@/app/api/hooks/books";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import Input from "@/app/components/ui/Input";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import globalStyles from "@/app/style/global";
+import COLORS from "@/app/style/primaryColor";
 import { BookDetails } from "@/app/types";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { router } from "expo-router";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
 
 const AllBooks = () => {
-  const { data: books, isLoading: booksLoading } = useGetBooks();
+  const params = useLocalSearchParams<{
+    search?: string;
+    author?: string;
+    minPrice?: string;
+    maxPrice?: string;
+  }>();
+
+  const [search, setSearch] = useState(params.search || "");
+  const [author, setAuthor] = useState(params.author || "");
+  const [minPrice, setMinPrice] = useState(params.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(params.maxPrice || "");
+
+  const bookParams: GetBooksParams = {
+    page: 1,
+    limit: 20,
+    search: search || undefined,
+    author: author || undefined,
+    minPrice: minPrice ? Number(minPrice) : undefined,
+    maxPrice: maxPrice ? Number(maxPrice) : undefined,
+  };
+
+  const { data: books, isLoading: booksLoading } = useGetBooks(bookParams);
 
   const goToBook = (id: string) => {
     router.push(`/protected/allListedbook/${id}`);
   };
 
-  if (booksLoading) return <BookLoader />;
+  const handleSearch = () => {
+    router.setParams({
+      search: search || undefined,
+      author: author || undefined,
+      minPrice: minPrice || undefined,
+      maxPrice: maxPrice || undefined,
+    });
+  };
+
+  if (booksLoading)
+    return (
+      <ActivityIndicator
+        size="large"
+        color={COLORS.primary}
+        style={{ marginTop: 20, alignSelf: "center" }}
+      />
+    );
 
   return (
     <PageScrollLayout title="All Listed Books" subtitle="Find all Listed books">
       <View style={styles.searchContainer}>
         <Input
           placeholder="Search Books..."
-          onChangeText={() => {}}
-          value=""
+          onChangeText={setSearch}
+          value={search}
           rightIcon={<EvilIcons name="search" size={24} color="black" />}
+          onRightIconPress={handleSearch}
+          onSubmitEditing={handleSearch}
         />
       </View>
       {books?.length === 0 ? (

@@ -1,3 +1,4 @@
+import { useGetFeaturedBooks } from "@/app/api/hooks/books";
 import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PressableCard from "@/app/components/ui/PressableCard";
@@ -13,6 +14,8 @@ interface Props {
   isLoading: boolean;
 }
 const FeaturedBooks = ({ books, isLoading }: Props) => {
+  const { data: featuredBooks, isLoading: featuredBooksLoading } =
+    useGetFeaturedBooks();
   return (
     <View style={globalStyles.container}>
       <Text style={globalStyles.subHeading}>Featured Books</Text>
@@ -22,9 +25,9 @@ const FeaturedBooks = ({ books, isLoading }: Props) => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={globalStyles.scrollView}
       >
-        {isLoading
+        {featuredBooksLoading
           ? [...Array(4)].map((_, index) => <CardSkeleton key={index} />)
-          : books?.map((book) => (
+          : featuredBooks?.books?.map((book: BookDetails) => (
               <PressableCard
                 key={book._id}
                 style={styles.bookCard}

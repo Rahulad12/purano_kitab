@@ -12,7 +12,7 @@ import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import COLORS from "@/app/style/primaryColor";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Linking,
   StyleSheet,

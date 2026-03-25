@@ -1,7 +1,7 @@
 import { useGetBookById } from "@/app/api/hooks/books";
 import { useGetFavorite } from "@/app/api/hooks/favorite";
-import BookLoader from "@/app/components/common/Loader";
 import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
+import { ListedBookCardSkeleton } from "@/app/components/common/skeletonLoader/listed-book-skeleton";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import COLORS from "@/app/style/primaryColor";
@@ -12,14 +12,6 @@ import { Image, StyleSheet, Text, View } from "react-native";
 const FavoriteBookCard = ({ bookId }: { bookId: string }) => {
   const { data: book, isLoading } = useGetBookById(bookId);
 
-  if (isLoading) {
-    return (
-      <View style={styles.cardSkeleton}>
-        <CardSkeleton titleWidth="80%" showTitle={true} cardWidth="100%" />
-      </View>
-    );
-  }
-
   if (!book) return null;
 
   return (
@@ -29,6 +21,12 @@ const FavoriteBookCard = ({ bookId }: { bookId: string }) => {
         router.push(`/protected/allListedbook/${book._id}`);
       }}
     >
+      {/* Loading State — 4 skeleton cards */}
+      {isLoading &&
+        Array.from({ length: 4 }).map((_, i) => (
+          <ListedBookCardSkeleton key={i} />
+        ))}
+
       <Image
         source={{ uri: book.image_url }}
         style={styles.bookCover}
@@ -86,7 +84,7 @@ const SavedAsFavorite = () => {
       {/* Header */}
 
       {/* Loading State */}
-      {isLoading && <BookLoader />}
+      {isLoading && <CardSkeleton />}
 
       {/* Empty State */}
       {!isLoading && favorites.length === 0 && (

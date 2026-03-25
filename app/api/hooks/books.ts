@@ -3,6 +3,7 @@ import {
   BookDetails,
   CreateBookInformation,
   CreateBookResponse,
+  GetAllBookResponse,
   GetBooksParams,
 } from "@/app/types";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
@@ -80,6 +81,17 @@ export const useCreateBooks = () => {
     },
     onError: (error) => {
       Toast.show({ type: "error", text1: error.message });
+    },
+  });
+};
+
+export const useGetFeaturedBooks = () => {
+  return useQuery({
+    queryKey: ["featuredBooks"],
+    queryFn: async () => {
+      const response: AxiosResponse<GetAllBookResponse> =
+        await axiosInstance.get("/books/featured");
+      return response.data;
     },
   });
 };

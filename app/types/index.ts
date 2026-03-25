@@ -5,8 +5,14 @@ export interface CreateBookInformation {
   description?: string;
   price: string;
   image_url?: string;
+  category: string;
 }
 
+export interface GetAllBookResponse {
+  success: boolean;
+  message: string;
+  books: BookDetails[];
+}
 export interface CreateBookResponse {
   message: string;
   success: boolean;

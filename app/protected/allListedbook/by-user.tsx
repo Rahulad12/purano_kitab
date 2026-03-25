@@ -1,5 +1,5 @@
 import { useGetBookByUser } from "@/app/api/hooks/books";
-import BookLoader from "@/app/components/common/Loader";
+import { ListedBookCardSkeleton } from "@/app/components/common/skeletonLoader/listed-book-skeleton";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
 import { BookDetails } from "@/app/types";
@@ -77,13 +77,18 @@ const ListedByUser = () => {
       headerChildren={
         <View style={styles.header}>
           <Text style={styles.headerCount}>
-            {books.length} {books.length === 1 ? "book" : "books"}
+            {isLoading
+              ? "Loading..."
+              : `${books.length} ${books.length === 1 ? "book" : "books"}`}
           </Text>
         </View>
       }
     >
-      {/* Loading State */}
-      {isLoading && <BookLoader />}
+      {/* Loading State — 4 skeleton cards */}
+      {isLoading &&
+        Array.from({ length: 4 }).map((_, i) => (
+          <ListedBookCardSkeleton key={i} />
+        ))}
 
       {/* Empty State */}
       {!isLoading && books.length === 0 && (
@@ -122,6 +127,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#9A8672",
     fontWeight: "500",
+  },
+
+  // ── Skeleton ──
+  skeletonBox: {
+    backgroundColor: "#e0e0e0",
+    borderRadius: 6,
+  },
+  skeletonCard: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 12,
+    overflow: "hidden",
   },
 
   // Card

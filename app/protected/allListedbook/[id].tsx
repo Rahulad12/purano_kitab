@@ -4,13 +4,12 @@ import {
   useSaveBookAsFavorite,
 } from "@/app/api/hooks/favorite";
 import Avatar from "@/app/components/common/Avatar";
-import BookLoader from "@/app/components/common/Loader";
+import BookDetailsSkeleton from "@/app/components/common/skeletonLoader/book-details-skeleton";
 import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PageLayout from "@/app/components/ui/PageLayout";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import COLORS from "@/app/style/primaryColor";
-import Entypo from "@expo/vector-icons/Entypo";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import React, { useState } from "react";
@@ -30,8 +29,7 @@ const BookDetails = () => {
   );
   const { mutateAsync: saveBookAsFavorite, isPending: isSaving } =
     useSaveBookAsFavorite();
-  const { data: favoriteBooks, isLoading: isLoadingFavorites } =
-    useGetFavorite();
+  const { data: favoriteBooks } = useGetFavorite();
   const isBookSetAsFavorite = favoriteBooks?.favorites.find(
     (favorite) => favorite.book === bookId,
   );
@@ -47,7 +45,7 @@ const BookDetails = () => {
     }
   };
 
-  if (isLoadingBook) return <BookLoader />;
+  if (isLoadingBook) return <BookDetailsSkeleton />;
 
   if (!book) {
     return (
@@ -61,7 +59,6 @@ const BookDetails = () => {
     );
   }
 
-  // Replace these with actual seller fields from your book object
   const sellerName =
     book?.owner.firstName + " " + book?.owner.lastName || "Unknown Seller";
   const sellerPhone = book?.owner.phoneNumber || null;
@@ -137,13 +134,8 @@ const BookDetails = () => {
           <View style={styles.sellerRow}>
             <Avatar
               firstName={book.owner.firstName || ""}
-              style={{
-                width: 50,
-                height: 50,
-              }}
-              textStyle={{
-                fontSize: 25,
-              }}
+              style={{ width: 50, height: 50 }}
+              textStyle={{ fontSize: 25 }}
             />
             <View>
               <Text style={styles.sellerName}>{sellerName}</Text>
@@ -160,7 +152,7 @@ const BookDetails = () => {
                 onPress={() => Linking.openURL(`tel:${sellerPhone}`)}
                 activeOpacity={0.8}
               >
-                <Entypo name="phone" size={20} color={COLORS.primary} />
+                <Fontisto name="phone" size={20} color={COLORS.lightText} />
                 <Text style={styles.contactText}>{sellerPhone}</Text>
               </TouchableOpacity>
             )}
@@ -170,7 +162,7 @@ const BookDetails = () => {
                 onPress={() => Linking.openURL(`mailto:${sellerEmail}`)}
                 activeOpacity={0.8}
               >
-                <Fontisto name="email" size={24} color="black" />
+                <Fontisto name="email" size={24} color={COLORS.lightText} />
                 <Text style={styles.contactText}>{sellerEmail}</Text>
               </TouchableOpacity>
             )}
@@ -200,7 +192,7 @@ const BookDetails = () => {
             onPress={() => sellerPhone && Linking.openURL(`tel:${sellerPhone}`)}
             activeOpacity={0.8}
           >
-            <Entypo name="phone" size={20} color={"#fff"} />
+            <Fontisto name="phone" size={20} color={"#fff"} />
           </TouchableOpacity>
         </View>
       </View>
@@ -212,6 +204,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+
+  // ── Skeleton ──
+  skeletonBox: {
+    backgroundColor: "#e0e0e0",
+    borderRadius: 6,
   },
 
   // ── Hero image ──
@@ -340,19 +338,6 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 14,
   },
-  sellerAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: COLORS.primary + "10",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  sellerAvatarText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: COLORS.secondary,
-  },
   sellerName: {
     fontSize: 15,
     fontWeight: "600",
@@ -374,9 +359,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 10,
-  },
-  contactIcon: {
-    fontSize: 16,
   },
   contactText: {
     fontSize: 14,

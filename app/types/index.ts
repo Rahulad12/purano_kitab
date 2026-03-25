@@ -114,3 +114,22 @@ export interface ChangeEmailOrPhoneDto {
   phone: string;
   password: string;
 }
+
+export interface CategoryResponse {
+  _id: string;
+  category: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+//search params
+export interface GetBooksParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  author?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  category?: string;
+}

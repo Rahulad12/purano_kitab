@@ -3,20 +3,12 @@ import {
   BookDetails,
   CreateBookInformation,
   CreateBookResponse,
+  GetBooksParams,
 } from "@/app/types";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import Toast from "react-native-toast-message";
 import axiosInstance from "../axiosInstance";
-
-export interface GetBooksParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  author?: string;
-  minPrice?: number;
-  maxPrice?: number;
-}
 
 export const useGetBooks = (params?: GetBooksParams) => {
   const {

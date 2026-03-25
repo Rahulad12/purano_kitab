@@ -1,8 +1,9 @@
 import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
-import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
+import PressableCard from "@/app/components/ui/PressableCard";
 import globalStyles from "@/app/style/global";
 import { BookDetails } from "@/app/types";
+import { router } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 const fallbackImg = "https://via.placeholder.com/100x150.png?text=No+Image";
@@ -24,7 +25,13 @@ const FeaturedBooks = ({ books, isLoading }: Props) => {
         {isLoading
           ? [...Array(4)].map((_, index) => <CardSkeleton key={index} />)
           : books?.map((book) => (
-              <Card key={book._id} style={styles.bookCard}>
+              <PressableCard
+                key={book._id}
+                style={styles.bookCard}
+                onPress={() =>
+                  router.push(`/protected/allListedbook/${book._id}`)
+                }
+              >
                 <BookImageWithSkeleton
                   uri={book.image_url || fallbackImg}
                   containerStyle={styles.bookImage}
@@ -33,7 +40,7 @@ const FeaturedBooks = ({ books, isLoading }: Props) => {
                   <Text numberOfLines={1}>{book.title}</Text>
                   <Text style={globalStyles.priceText}>Rs. {book.price}</Text>
                 </View>
-              </Card>
+              </PressableCard>
             ))}
       </ScrollView>
     </View>

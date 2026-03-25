@@ -1,8 +1,8 @@
 import { useGetFavorite } from "@/app/api/hooks/favorite";
 import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import Button from "@/app/components/ui/Button";
-import Card from "@/app/components/ui/Card";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
+import PressableCard from "@/app/components/ui/PressableCard";
 import globalStyles from "@/app/style/global";
 import COLORS from "@/app/style/primaryColor";
 import { BookDetails } from "@/app/types";
@@ -54,7 +54,13 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
               ?.map((book) => {
                 const favorited = !!isFavorite(book._id);
                 return (
-                  <Card key={book._id} style={styles.bookCard}>
+                  <PressableCard
+                    key={book._id}
+                    style={styles.bookCard}
+                    onPress={() =>
+                      router.push(`/protected/allListedbook/${book._id}`)
+                    }
+                  >
                     {/* Book Image */}
                     <BookImageWithSkeleton
                       uri={book.image_url}
@@ -89,7 +95,7 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
                         />
                       </TouchableOpacity>
                     </View>
-                  </Card>
+                  </PressableCard>
                 );
               })}
 

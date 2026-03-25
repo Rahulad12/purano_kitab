@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "purano_kitabl",
-    "slug": "purano_kitabl",
+    "name": "purano_kitab",
+    "slug": "purano_kitab",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "puranokitabl",
+    "scheme": "puranokitab",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {

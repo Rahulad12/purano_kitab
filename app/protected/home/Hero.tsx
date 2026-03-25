@@ -1,43 +1,44 @@
+import { useGetCategories } from "@/app/api/hooks/category";
 import Input from "@/app/components/ui/Input";
 import globalStyles from "@/app/style/global";
+import { GetBooksParams } from "@/app/types";
 import { EvilIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const Hero = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<GetBooksParams>({
+    search: "",
+    author: "",
+    limit: 10,
+    page: 1,
+    minPrice: 0,
+    maxPrice: 10000,
+    category: "",
+  });
+  //mutation
+  const { data: categories, isLoading: categoryLoading } = useGetCategories();
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
+    if (searchQuery?.search?.trim()) {
       router.push(
-        `/protected/allListedbook?search=${encodeURIComponent(searchQuery.trim())}`,
+        `/protected/allListedbook?search=${encodeURIComponent(
+          searchQuery?.search?.trim() || "",
+        )}&category=${encodeURIComponent(searchQuery.category || "")}`,
       );
     }
   };
-
-  const buttonText = [
-    { text: "Academic", onPress: () => alert("Academic pressed") },
-    { text: "Fiction", onPress: () => alert("Fiction pressed") },
-    { text: "Non-Fiction", onPress: () => alert("Non-Fiction pressed") },
-    { text: "Entrance Exam", onPress: () => alert("Entrance Exam pressed") },
-    { text: "Others", onPress: () => alert("Others pressed") },
-  ];
-
   return (
     <View style={{ ...globalStyles.container }}>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Input
           placeholder="Search Books..."
-          onChangeText={setSearchQuery}
-          value={searchQuery}
+          onChangeText={(text) =>
+            setSearchQuery((prev) => ({ ...prev, search: text }))
+          }
+          value={searchQuery.search || ""}
           rightIcon={<EvilIcons name="search" size={24} color="black" />}
           onRightIconPress={handleSearch}
           onSubmitEditing={handleSearch}
@@ -45,21 +46,32 @@ const Hero = () => {
       </View>
 
       {/* Horizontal Scroll Buttons */}
-      <ScrollView
+      {/* <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.buttonScrollContainer}
       >
-        {buttonText.map((button, index) => (
+        {categories?.map((category: CategoryResponse, index: number) => (
           <TouchableOpacity
             key={index}
-            onPress={button.onPress}
+            onPress={() => {
+              setSearchQuery((prev) => ({
+                ...prev,
+                category: category.category,
+              }));
+            }}
             style={globalStyles.button}
           >
-            <Text style={globalStyles.paragraph}>{button.text}</Text>
+            {categoryLoading ? (
+              <Text style={globalStyles.paragraph}>Loading...</Text>
+            ) : (
+              <Text style={globalStyles.paragraph}>
+                {category?.category || "Unknown"}
+              </Text>
+            )}
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 };

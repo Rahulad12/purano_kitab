@@ -2,6 +2,7 @@ import { useGetBookByUser } from "@/app/api/hooks/books";
 import { ListedBookCardSkeleton } from "@/app/components/common/skeletonLoader/listed-book-skeleton";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
+import COLORS from "@/app/style/primaryColor";
 import { BookDetails } from "@/app/types";
 import { router } from "expo-router";
 import React from "react";
@@ -120,12 +121,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#1C1008",
+    color: COLORS.text,
     letterSpacing: -0.5,
   },
   headerCount: {
     fontSize: 13,
-    color: "#9A8672",
+    color: COLORS.secondary,
     fontWeight: "500",
   },
 
@@ -158,13 +159,13 @@ const styles = StyleSheet.create({
   bookTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#1C1008",
+    color: COLORS.text,
     lineHeight: 20,
     marginBottom: 2,
   },
   bookAuthor: {
     fontSize: 12,
-    color: "#B07D4A",
+    color: COLORS.lightText,
     fontWeight: "600",
     marginBottom: 6,
   },
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1C1008",
+    color: COLORS.price,
   },
   badge: {
     paddingHorizontal: 8,
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   badgeAvailableText: {
-    color: "#2D6A4F",
+    color: COLORS.primary,
   },
   badgeSoldText: {
     color: "#C0392B",

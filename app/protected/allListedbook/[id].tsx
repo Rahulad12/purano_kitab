@@ -29,7 +29,8 @@ const BookDetails = () => {
   );
   const { mutateAsync: saveBookAsFavorite, isPending: isSaving } =
     useSaveBookAsFavorite();
-  const { data: favoriteBooks } = useGetFavorite();
+  const { data: favoriteBooks, refetch: refatchedFavorite } = useGetFavorite();
+
   const isBookSetAsFavorite = favoriteBooks?.favorites.find(
     (favorite) => favorite.book === bookId,
   );
@@ -39,7 +40,7 @@ const BookDetails = () => {
     if (!bookId || isSaving) return;
     try {
       await saveBookAsFavorite(bookId);
-      setIsFavorited(true);
+      // refatchedFavorite();
     } catch (error) {
       console.error("Error saving book as favorite:", error);
     }
@@ -79,7 +80,7 @@ const BookDetails = () => {
           style={[styles.favButton, isFavorited && styles.favButtonActive]}
           onPress={() => handleBookSaveAsFavorite(bookId as string)}
           activeOpacity={0.8}
-          disabled={!!isBookSetAsFavorite || isSaving}
+          disabled={isSaving}
         >
           <Text style={styles.favIcon}>
             {isSaving ? (
@@ -174,7 +175,7 @@ const BookDetails = () => {
           <TouchableOpacity
             style={[styles.ctaBtn, styles.ctaSecondary]}
             onPress={() => handleBookSaveAsFavorite(bookId as string)}
-            disabled={isSaving || !!isBookSetAsFavorite}
+            disabled={isSaving}
             activeOpacity={0.8}
           >
             <Fontisto

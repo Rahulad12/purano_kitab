@@ -3,6 +3,7 @@ import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import BookImageWithSkeleton from "@/app/components/ui/ImageWithLoader";
 import PressableCard from "@/app/components/ui/PressableCard";
 import globalStyles from "@/app/style/global";
+import COLORS from "@/app/style/primaryColor";
 import { BookDetails } from "@/app/types";
 import { router } from "expo-router";
 import React from "react";
@@ -40,7 +41,16 @@ const FeaturedBooks = ({ books, isLoading }: Props) => {
                   containerStyle={styles.bookImage}
                 />
                 <View style={styles.bookInfo}>
-                  <Text numberOfLines={1}>{book.title}</Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "600",
+                      color: COLORS.text,
+                    }}
+                  >
+                    {book.title}
+                  </Text>
                   <Text style={globalStyles.priceText}>Rs. {book.price}</Text>
                 </View>
               </PressableCard>

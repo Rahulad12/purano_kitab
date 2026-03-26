@@ -1,6 +1,5 @@
 import { useGetBookById } from "@/app/api/hooks/books";
 import { useGetFavorite } from "@/app/api/hooks/favorite";
-import CardSkeleton from "@/app/components/common/skeletonLoader/card-skeleton";
 import { ListedBookCardSkeleton } from "@/app/components/common/skeletonLoader/listed-book-skeleton";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import PressableCard from "@/app/components/ui/PressableCard";
@@ -84,7 +83,7 @@ const SavedAsFavorite = () => {
       {/* Header */}
 
       {/* Loading State */}
-      {isLoading && <CardSkeleton />}
+      {isLoading && <ListedBookCardSkeleton />}
 
       {/* Empty State */}
       {!isLoading && favorites.length === 0 && (
@@ -122,7 +121,7 @@ const styles = StyleSheet.create({
   },
   headerCount: {
     fontSize: 13,
-    color: COLORS.lightText,
+    color: COLORS.secondary,
     fontWeight: "500",
   },
 

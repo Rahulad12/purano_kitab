@@ -24,7 +24,7 @@ const globalStyles = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.lightText,
   },
-  priceText: { fontSize: 12, color: COLORS.price },
+  priceText: { fontSize: 14, fontWeight: "700", color: COLORS.price },
   link: {
     color: "#007bff",
     textDecorationLine: "underline",

@@ -1,7 +1,8 @@
+import { useGetBooksMatrixByOwner } from "@/app/api/hooks/books";
+import { useGetLoggedInUserDetails } from "@/app/api/hooks/user";
 import Avatar from "@/app/components/common/Avatar";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
 import { useAuth } from "@/app/context/AuthContext";
-import { usePuranoContext } from "@/app/context/use-context/use-purano-context";
 import COLORS from "@/app/style/primaryColor";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -9,8 +10,13 @@ import React from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const Profile = () => {
+  //hooks
   const { logout } = useAuth();
-  const { user } = usePuranoContext();
+
+  //mutation
+  const { data: booksMatrix } = useGetBooksMatrixByOwner();
+  const { data: user, isFetching: isLoadingUser } = useGetLoggedInUserDetails();
+
   const router = useRouter();
 
   type SettingItem = {
@@ -90,17 +96,19 @@ const Profile = () => {
         {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>12</Text>
+            <Text style={styles.statValue}>{booksMatrix?.books || 0}</Text>
             <Text style={styles.statLabel}>Listed</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>5</Text>
+            <Text style={styles.statValue}>{booksMatrix?.soldBooks || 0}</Text>
             <Text style={styles.statLabel}>Sold</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>8</Text>
+            <Text style={styles.statValue}>
+              {booksMatrix?.favoriteCount || 0}
+            </Text>
             <Text style={styles.statLabel}>Favorites</Text>
           </View>
         </View>

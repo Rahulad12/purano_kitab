@@ -12,6 +12,7 @@ const Home = () => {
   const { data: books, isFetching: isLoading } = useGetBooks();
   const { mutateAsync: saveBook, isPending: isSaving } =
     useSaveBookAsFavorite();
+
   const handleBookSaveAsFavorite = async (bookId: string) => {
     try {
       await saveBook(bookId);

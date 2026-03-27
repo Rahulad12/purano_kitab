@@ -117,7 +117,7 @@ export interface ChangePasswordDto {
 
 export interface ChangeEmailOrPhoneDto {
   email: string;
-  phone: string;
+  phoneNumber: string;
   password: string;
 }
 
@@ -138,4 +138,11 @@ export interface GetBooksParams {
   minPrice?: number;
   maxPrice?: number;
   category?: string;
+}
+
+//user matrix response
+export interface SellerBooksMatric {
+  books: string;
+  favoriteCount: string;
+  soldBooks: string;
 }

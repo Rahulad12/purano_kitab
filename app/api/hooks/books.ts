@@ -5,6 +5,7 @@ import {
   CreateBookResponse,
   GetAllBookResponse,
   GetBooksParams,
+  SellerBooksMatric,
 } from "@/app/types";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
@@ -91,6 +92,17 @@ export const useGetFeaturedBooks = () => {
     queryFn: async () => {
       const response: AxiosResponse<GetAllBookResponse> =
         await axiosInstance.get("/books/featured");
+      return response.data;
+    },
+  });
+};
+
+export const useGetBooksMatrixByOwner = () => {
+  return useQuery({
+    queryKey: ["booksMatrixByOwner"],
+    queryFn: async () => {
+      const response: AxiosResponse<SellerBooksMatric> =
+        await axiosInstance.get("/books/user/matrix");
       return response.data;
     },
   });

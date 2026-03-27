@@ -284,6 +284,7 @@ const styles = StyleSheet.create({
   },
   searchInputWrapper: {
     flex: 1,
+    height: 46,
   },
   filterBtn: {
     width: 44,

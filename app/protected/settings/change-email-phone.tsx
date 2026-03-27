@@ -1,7 +1,9 @@
-import { useChangeEmailOrPhone } from "@/app/api/hooks/user";
+import {
+  useChangeEmailOrPhone,
+  useGetLoggedInUserDetails,
+} from "@/app/api/hooks/user";
 import Input from "@/app/components/ui/Input";
 import PageScrollLayout from "@/app/components/ui/PageScrollLayout";
-import { usePuranoContext } from "@/app/context/use-context/use-purano-context";
 import COLORS from "@/app/style/primaryColor";
 import { ChangeEmailOrPhoneDto } from "@/app/types";
 import { Feather } from "@expo/vector-icons";
@@ -10,11 +12,15 @@ import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const ChangeEmailScreen = () => {
-  const { user } = usePuranoContext();
+  const {
+    data: user,
+    isFetching: isLoadingUser,
+    refetch: refetchUser,
+  } = useGetLoggedInUserDetails();
   const router = useRouter();
   const [formData, setFormData] = useState<ChangeEmailOrPhoneDto>({
     email: user?.email || "",
-    phone: user?.phoneNumber || "",
+    phoneNumber: user?.phoneNumber || "",
     password: "",
   });
   const { mutateAsync: changeEmailOrPhone, isPending: emailOrPhoneChanging } =
@@ -22,6 +28,7 @@ const ChangeEmailScreen = () => {
 
   const handleSave = async () => {
     await changeEmailOrPhone(formData);
+    refetchUser();
     router.back();
   };
 
@@ -45,9 +52,9 @@ const ChangeEmailScreen = () => {
           placeholder="Enter new phone number"
           keyboardType="phone-pad"
           autoCapitalize="none"
-          value={formData.phone}
+          value={formData.phoneNumber}
           onChangeText={(text) =>
-            setFormData((prev) => ({ ...prev, phone: text }))
+            setFormData((prev) => ({ ...prev, phoneNumber: text }))
           }
           leftIcon={<Feather name="phone" size={20} color={COLORS.primary} />}
         />

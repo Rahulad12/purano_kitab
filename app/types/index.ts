@@ -74,7 +74,7 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
-  _id: string;
+  id: string;
   phoneNumber?: string;
   isActive: boolean;
   isDeleted: boolean;
@@ -90,6 +90,34 @@ export interface AuthRequest {
   email: string;
   password: string;
   phoneNumber?: string;
+}
+
+// Google OAuth Types
+export interface GoogleAuthorizationUrlResponse {
+  statusCode: number;
+  message: string;
+  data: {
+    authorizationUrl: string;
+  };
+}
+export interface GoogleOAuthCallbackRequest {
+  code: string;
+  state?: string;
+}
+
+export interface GoogleOAuthResponse {
+  accessToken: string;
+  refreshToken?: string;
+  user: User;
+}
+
+export interface TokenRefreshRequest {
+  refreshToken: string;
+}
+
+export interface TokenRefreshResponse {
+  accessToken: string;
+  expiresIn?: number;
 }
 
 //favorite

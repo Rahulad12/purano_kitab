@@ -1,6 +1,8 @@
-import COLORS from "@/app/style/primaryColor";
+import { useTheme } from "@/app/context/ThemeContext";
+import { SPACING } from "@/app/style";
 import React from "react";
 import {
+  ActivityIndicator,
   StyleSheet,
   Text,
   TextStyle,
@@ -12,148 +14,94 @@ import {
 export interface ButtonProps extends TouchableOpacityProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "ghost" | "link";
+  size?: "sm" | "md" | "lg";
   style?: ViewStyle;
   textStyle?: TextStyle;
+  isLoading?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
   children,
   variant = "primary",
+  size = "md",
   onPress,
   style,
   textStyle,
   disabled,
+  isLoading = false,
   ...rest
 }) => {
-  // Determine container styles based on variant and disabled state
+  const { theme } = useTheme();
+
   const getContainerStyle = () => {
-    const baseStyle = styles.baseContainer;
-    switch (variant) {
-      case "primary":
-        return [
-          baseStyle,
-          styles.primaryContainer,
-          disabled && styles.disabledContainer,
-        ];
-      case "secondary":
-        return [
-          baseStyle,
-          styles.secondaryContainer,
-          disabled && styles.disabledContainer,
-        ];
-      case "ghost":
-        return [
-          baseStyle,
-          styles.ghostContainer,
-          disabled && styles.disabledGhost,
-        ];
-      case "link":
-        return [styles.linkContainer, disabled && styles.disabledLink];
-      default:
-        return [baseStyle, styles.primaryContainer];
-    }
+    const sizeStyles = {
+      sm: { paddingVertical: SPACING.sm, paddingHorizontal: SPACING.md },
+      md: { paddingVertical: SPACING.md, paddingHorizontal: SPACING.lg },
+      lg: { paddingVertical: SPACING.lg, paddingHorizontal: SPACING.xl },
+    };
+
+    const baseStyle = [
+      styles.baseContainer,
+      sizeStyles[size],
+      { borderRadius: theme.radius.md },
+    ];
+
+    const variantStyle = {
+      primary: { backgroundColor: theme.colors.primary },
+      secondary: { backgroundColor: theme.colors.secondary },
+      ghost: {
+        backgroundColor: "transparent",
+        borderWidth: 1,
+        borderColor: theme.colors.primary,
+      },
+      link: { backgroundColor: "transparent" },
+    };
+
+    const disabledStyle = disabled
+      ? { backgroundColor: theme.colors.disabled }
+      : {};
+
+    return [baseStyle, variantStyle[variant], disabledStyle];
   };
 
-  // Determine text styles based on variant and disabled state
   const getTextStyle = () => {
-    const baseStyle = styles.baseText;
-    switch (variant) {
-      case "primary":
-        return [baseStyle, styles.primaryText, disabled && styles.disabledText];
-      case "secondary":
-        return [
-          baseStyle,
-          styles.secondaryText,
-          disabled && styles.disabledText,
-        ];
-      case "ghost":
-        return [
-          baseStyle,
-          styles.ghostText,
-          disabled && styles.disabledGhostText,
-        ];
-      case "link":
-        return [styles.linkText, disabled && styles.disabledLinkText];
-      default:
-        return [baseStyle, styles.primaryText];
-    }
+    const textColor = {
+      primary: disabled ? theme.colors.disabledText : "#FFFFFF",
+      secondary: disabled ? theme.colors.disabledText : "#FFFFFF",
+      ghost: disabled ? theme.colors.disabledText : theme.colors.primary,
+      link: disabled ? theme.colors.disabledText : theme.colors.primary,
+    };
+
+    return [styles.baseText, { color: textColor[variant] }, textStyle];
   };
 
   return (
     <TouchableOpacity
       style={[getContainerStyle(), style]}
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       activeOpacity={0.7}
       {...rest}
     >
-      <Text style={[getTextStyle(), textStyle]}>{children}</Text>
+      {isLoading ? (
+        <ActivityIndicator
+          color={(getTextStyle()[1] as { color: string }).color}
+        />
+      ) : (
+        <Text style={getTextStyle()}>{children}</Text>
+      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   baseContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
   },
-  primaryContainer: {
-    backgroundColor: COLORS.primary,
-  },
-  secondaryContainer: {
-    backgroundColor: COLORS.secondary,
-  },
-  ghostContainer: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#7dc96a",
-  },
-  linkContainer: {
-    backgroundColor: "transparent",
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  disabledContainer: {
-    backgroundColor: "#A0A0A0",
-  },
-  disabledGhost: {
-    borderColor: "#A0A0A0",
-  },
-  disabledLink: {
-    // no background change
-  },
-
   baseText: {
-    fontSize: 16,
     fontWeight: "600",
-  },
-  primaryText: {
-    color: "#FFFFFF",
-  },
-  secondaryText: {
-    color: "#FFFFFF",
-  },
-  ghostText: {
-    color: "#dd822c",
-  },
-  linkText: {
-    color: "#2A4BA0",
     fontSize: 16,
-    fontWeight: "500",
-    textDecorationLine: "underline",
-  },
-  disabledText: {
-    color: "#E0E0E0",
-  },
-  disabledGhostText: {
-    color: "#A0A0A0",
-  },
-  disabledLinkText: {
-    color: "#A0A0A0",
-    textDecorationLine: "underline",
   },
 });
 

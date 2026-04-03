@@ -3,8 +3,8 @@ import { router } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useGetFavorite } from "../api/hooks/favorite";
-import globalStyles from "../style/global";
-import COLORS from "../style/primaryColor";
+import { useTheme } from "../context/ThemeContext";
+import { SPACING, TYPOGRAPHY } from "../style";
 
 interface HeaderProps {
   onProfilePress?: () => void;
@@ -12,58 +12,63 @@ interface HeaderProps {
 
 const Header = ({ onProfilePress }: HeaderProps) => {
   const { data: favoriteData } = useGetFavorite();
+  const { theme } = useTheme();
+
   return (
-    <View style={[globalStyles.container]}>
-      {/* Top Bar */}
-      <View style={styles.topBar}>
-        <Text style={styles.logoText}>PuranoKitab</Text>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          paddingHorizontal: SPACING.lg,
+          paddingVertical: SPACING.md,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.topBar,
+          {
+            borderBottomColor: theme.colors.border,
+          },
+        ]}
+      >
+        <Text style={[styles.logoText, { color: theme.colors.primary }]}>
+          PuranoKitab
+        </Text>
 
         <View style={styles.rightContainer}>
-          {/* <TouchableOpacity onPress={() => alert("Notification pressed")}>
-            <Ionicons name="notifications-outline" size={24} color="black" />
-          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => router.push("/protected/allListedbook/favorite")}
-            style={{
-              position: "relative",
-            }}
+            style={styles.heartIcon}
           >
-            {/* <Ionicons
-              name="heart-outline"
-              size={24}
-              color={
-                favoriteData && favoriteData?.favorites?.length > 0
-                  ? "red"
-                  : "black"
-              }
-            /> */}
             {favoriteData && favoriteData?.favorites?.length > 0 ? (
               <MaterialIcons
                 name="favorite"
                 size={24}
-                color={COLORS.secondary}
+                color={theme.colors.secondary}
               />
             ) : (
-              <MaterialIcons name="favorite" size={24} color="black" />
+              <MaterialIcons
+                name="favorite"
+                size={24}
+                color={theme.colors.textSecondary}
+              />
             )}
-            <Text
-              style={{
-                position: "absolute",
-                right: -2,
-                top: -17,
-                color: COLORS.primary,
-                fontWeight: 800,
-                fontSize: 15,
-              }}
-            >
-              {favoriteData?.favorites.length}
-            </Text>
+            {favoriteData?.favorites.length &&
+              favoriteData.favorites.length > 0 && (
+                <Text
+                  style={[styles.badgeText, { color: theme.colors.primary }]}
+                >
+                  {favoriteData.favorites.length}
+                </Text>
+              )}
           </TouchableOpacity>
           <TouchableOpacity onPress={onProfilePress}>
             <Ionicons
               name="person-circle-outline"
               size={28}
-              color={COLORS.primary}
+              color={theme.colors.primary}
             />
           </TouchableOpacity>
         </View>
@@ -73,41 +78,33 @@ const Header = ({ onProfilePress }: HeaderProps) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    paddingBottom: SPACING.md,
+  },
   topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: 12,
+    paddingBottom: SPACING.md,
     borderBottomWidth: 1,
-    borderColor: "#eee",
   },
   rightContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACING.lg,
   },
   logoText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: COLORS.primary,
+    ...TYPOGRAPHY.h4,
   },
-  categoryScroll: {
-    marginTop: 12,
+  heartIcon: {
+    position: "relative",
   },
-  categoryContainer: {
-    paddingHorizontal: 4,
-  },
-  categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 12,
-    borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-  },
-  categoryText: {
-    fontSize: 14,
-    color: "#333",
-    fontWeight: "500",
+  badgeText: {
+    position: "absolute",
+    right: -8,
+    top: -12,
+    fontWeight: "800",
+    fontSize: 12,
   },
 });
 

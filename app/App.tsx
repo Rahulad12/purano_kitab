@@ -1,30 +1,20 @@
 import { Redirect } from "expo-router";
-import React, { useState } from "react";
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Login from "./authpage/Login";
-import Register from "./authpage/Register";
+import React from "react";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useGoogleLogin } from "./api";
 import BookLoader from "./components/common/Loader";
-import Button from "./components/ui/Button";
+import SocialLoginButton from "./components/ui/SocialLoginButton";
 import { useAuth } from "./context/AuthContext";
-import globalStyles from "./style/global";
-import COLORS from "./style/primaryColor";
 
 const App = () => {
   const { isLoggedIn, isloading } = useAuth();
-  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const { handleGoogleLogin, isLoading: googleLoading } = useGoogleLogin();
 
   if (isloading) return <BookLoader />;
   if (isLoggedIn) return <Redirect href="/protected" />;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.header}>
         <Image
@@ -33,114 +23,126 @@ const App = () => {
           }}
           style={styles.logo}
         />
-        <Text
-          style={[
-            globalStyles.heading,
-            {
-              textAlign: "center",
-            },
-          ]}
-        >
-          Welcome to PuranoKitab
-        </Text>
-        <Text style={globalStyles.paragraph}>
-          Buy and Sell Used Books Easily
-        </Text>
+        <Text style={styles.appName}>PuranoKitab</Text>
+        <Text style={styles.tagline}>BUY &amp; SELL USED BOOKS</Text>
       </View>
 
-      {/* Tabs */}
-      <View style={styles.tabContainer}>
-        {["login", "register"].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tabButton,
-              activeTab === tab && styles.activeTabButton,
-            ]}
-            onPress={() => setActiveTab(tab as "login" | "register")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && styles.activeTabText,
-              ]}
-            >
-              {tab === "login" ? "Login" : "Register"}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      <View style={styles.divider} />
+
+      {/* Welcome */}
+      <View style={styles.welcomeSection}>
+        <Text style={styles.welcomeTitle}>Welcome back</Text>
+        <Text style={styles.welcomeSub}>Sign in to continue your journey</Text>
       </View>
 
-      {/* Form */}
-      <View style={styles.formContainer}>
-        {activeTab === "login" ? <Login /> : <Register />}
-
-        {/* Login with Google */}
-        {activeTab === "login" && (
-          <Button variant="ghost">
-            <Text style={globalStyles.paragraph}>Login with Google</Text>
-          </Button>
-        )}
-      </View>
+      {/* Google Login Button */}
+      <SocialLoginButton
+        provider="google"
+        label="Continue with Google"
+        onPress={handleGoogleLogin}
+        isLoading={googleLoading}
+        disabled={googleLoading}
+      />
 
       {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={globalStyles.priceText}>
-          © {new Date().getFullYear()} PuranoKitab
-        </Text>
-      </View>
+      <Text style={styles.footer}>
+        © {new Date().getFullYear()} PuranoKitab
+      </Text>
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: "#fdf6ec",
+  },
+  content: {
+    flexGrow: 1,
+    alignItems: "center",
+    paddingHorizontal: 32,
+    paddingTop: 60,
+    paddingBottom: 32,
   },
   header: {
-    display: "flex",
     alignItems: "center",
-    marginBottom: 20,
-    marginTop: 20,
+    marginBottom: 24,
   },
   logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: 12,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    marginBottom: 16,
   },
-  tabContainer: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  activeTabButton: {
-    borderBottomWidth: 3,
-    borderBottomColor: COLORS.secondary,
-  },
-  tabText: {
-    fontSize: 16,
-    color: "#666",
-  },
-  activeTabText: {
+  appName: {
+    fontFamily: "Georgia",
+    fontSize: 28,
     fontWeight: "bold",
-    color: COLORS.primary,
+    color: "#3d2008",
+    letterSpacing: 0.5,
   },
-  formContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 10,
+  tagline: {
+    fontFamily: "Georgia",
+    fontSize: 12,
+    color: "#9c6b3c",
+    letterSpacing: 2,
+    marginTop: 4,
+  },
+  divider: {
+    width: 60,
+    height: 1,
+    backgroundColor: "#c8864a",
+    opacity: 0.4,
+    marginVertical: 28,
+  },
+  welcomeSection: {
+    alignItems: "center",
+    marginBottom: 36,
+  },
+  welcomeTitle: {
+    fontFamily: "Georgia",
+    fontSize: 22,
+    color: "#3d2008",
+    marginBottom: 6,
+  },
+  welcomeSub: {
+    fontFamily: "Georgia",
+    fontSize: 13,
+    color: "#9c6b3c",
+  },
+  googleButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    width: "100%",
+    shadowColor: "#b8855a",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: "#e8d5be",
+    gap: 12,
+  },
+  googleIcon: {
+    width: 20,
+    height: 20,
+  },
+  googleButtonText: {
+    fontFamily: "Georgia",
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#3d2008",
   },
   footer: {
-    paddingVertical: 12,
-    alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
+    marginTop: "auto",
+    paddingTop: 40,
+    fontFamily: "Georgia",
+    fontSize: 11,
+    color: "#b8925a",
   },
 });
 

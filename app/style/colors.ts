@@ -1,0 +1,63 @@
+/**
+ * Color Palette - Centralized color system with light and dark mode support
+ */
+
+export const LIGHT_COLORS = {
+  primary: "#257945",
+  primaryLight: "#3a9a5f",
+  primaryDark: "#1a4f2e",
+  secondary: "#f99523",
+  secondaryLight: "#fba546",
+  secondaryDark: "#d4751a",
+  text: "#1E222B",
+  textSecondary: "#6B7280",
+  textTertiary: "#9CA3AF",
+  background: "#FFFFFF",
+  backgroundSecondary: "#F9FAFB",
+  backgroundTertiary: "#F3F4F6",
+  success: "#10B981",
+  warning: "#F59E0B",
+  error: "#EF4444",
+  info: "#3B82F6",
+  price: "#e74017",
+  priceLight: "#f25c3b",
+  border: "#E5E7EB",
+  borderLight: "#F3F4F6",
+  borderDark: "#D1D5DB",
+  placeholder: "#D1D5DB",
+  disabled: "#E5E7EB",
+  disabledText: "#9CA3AF",
+  overlay: "rgba(0, 0, 0, 0.5)",
+  overlayLight: "rgba(0, 0, 0, 0.2)",
+};
+
+export const DARK_COLORS = {
+  primary: "#52C77C",
+  primaryLight: "#6FD993",
+  primaryDark: "#3d9a5f",
+  secondary: "#f99523",
+  secondaryLight: "#fba546",
+  secondaryDark: "#d4751a",
+  text: "#F3F4F6",
+  textSecondary: "#D1D5DB",
+  textTertiary: "#9CA3AF",
+  background: "#111827",
+  backgroundSecondary: "#1F2937",
+  backgroundTertiary: "#374151",
+  success: "#10B981",
+  warning: "#F59E0B",
+  error: "#F87171",
+  info: "#60A5FA",
+  price: "#f87171",
+  priceLight: "#fca5a5",
+  border: "#374151",
+  borderLight: "#4B5563",
+  borderDark: "#1F2937",
+  placeholder: "#6B7280",
+  disabled: "#374151",
+  disabledText: "#6B7280",
+  overlay: "rgba(0, 0, 0, 0.7)",
+  overlayLight: "rgba(0, 0, 0, 0.3)",
+};
+
+export type ColorScheme = typeof LIGHT_COLORS;

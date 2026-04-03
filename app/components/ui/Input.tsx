@@ -1,4 +1,5 @@
-import COLORS from "@/app/style/primaryColor";
+import { useTheme } from "@/app/context/ThemeContext";
+import { SPACING, TYPOGRAPHY } from "@/app/style";
 import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -56,6 +57,7 @@ const Input: React.FC<InputProps> = ({
   onRightIconPress,
   ...rest
 }) => {
+  const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = (e: any) => {
@@ -71,29 +73,30 @@ const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, containerStyle]}>
       {label && (
-        <Text style={[styles.label, labelStyle]}>
+        <Text style={[styles.label, { color: theme.colors.text }, labelStyle]}>
           {label}
-          {required && <Text style={{ color: COLORS.error }}> *</Text>}
+          {required && <Text style={{ color: theme.colors.error }}> *</Text>}
         </Text>
       )}
 
       <View
         style={[
           styles.inputContainer,
-          isFocused && styles.inputFocused,
-          error && styles.inputError,
+          {
+            borderColor: isFocused ? theme.colors.primary : theme.colors.border,
+            backgroundColor: theme.colors.background,
+          },
+          error && { borderColor: theme.colors.error },
         ]}
       >
-        {/* LEFT ICON */}
         {leftIcon && <View style={styles.iconLeft}>{leftIcon}</View>}
 
-        {/* INPUT */}
         <TextInput
-          style={[styles.input, inputStyle]}
+          style={[styles.input, { color: theme.colors.text }, inputStyle]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={COLORS.placeholder}
+          placeholderTextColor={theme.colors.placeholder}
           secureTextEntry={secureTextEntry}
           keyboardType={keyboardType}
           onFocus={handleFocus}
@@ -101,7 +104,6 @@ const Input: React.FC<InputProps> = ({
           {...rest}
         />
 
-        {/* RIGHT ICON (custom OR password toggle) */}
         {togglePassword !== undefined ? (
           <TouchableOpacity
             onPress={() => setTogglePassword?.(!togglePassword)}
@@ -109,7 +111,7 @@ const Input: React.FC<InputProps> = ({
             <Feather
               name={togglePassword ? "eye-off" : "eye"}
               size={20}
-              color="#94A3B8"
+              color={theme.colors.textSecondary}
             />
           </TouchableOpacity>
         ) : (
@@ -121,7 +123,11 @@ const Input: React.FC<InputProps> = ({
         )}
       </View>
 
-      {error && <Text style={[styles.error, errorStyle]}>{error}</Text>}
+      {error && (
+        <Text style={[styles.error, { color: theme.colors.error }, errorStyle]}>
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
@@ -129,50 +135,30 @@ const Input: React.FC<InputProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
-
   label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: COLORS.text,
-    marginBottom: 6,
+    ...TYPOGRAPHY.label,
+    marginBottom: SPACING.sm,
   },
-
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: COLORS.border,
     borderRadius: 8,
-    paddingHorizontal: 12,
-    backgroundColor: COLORS.background,
+    paddingHorizontal: SPACING.md,
+    height: 48,
   },
-
   input: {
     flex: 1,
-    height: 48,
-    fontSize: 16,
-    color: COLORS.text,
+    ...TYPOGRAPHY.bodyMedium,
   },
-
   iconLeft: {
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
-
-  inputFocused: {
-    borderColor: COLORS.primary,
-    borderWidth: 2,
-  },
-
-  inputError: {
-    borderColor: COLORS.error,
-  },
-
   error: {
-    fontSize: 12,
-    color: COLORS.error,
-    marginTop: 4,
+    ...TYPOGRAPHY.captionSmall,
+    marginTop: SPACING.sm,
   },
 });
 

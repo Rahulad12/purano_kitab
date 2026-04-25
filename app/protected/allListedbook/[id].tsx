@@ -82,21 +82,13 @@ const BookDetails = () => {
           activeOpacity={0.8}
           disabled={isSaving}
         >
-          <Text style={styles.favIcon}>
-            {isSaving ? (
-              "⏳"
-            ) : isBookSetAsFavorite ? (
-              <Fontisto name="favorite" size={24} color={COLORS.secondary} />
-            ) : (
-              <Fontisto
-                name="favorite"
-                size={24}
-                color="black"
-                lineBreakMode="clip"
-              />
-            )}
-          </Text>
-          <Text style={styles.favLabel}></Text>
+          {isSaving ? (
+            <Text style={styles.favIcon}>⏳</Text>
+          ) : isBookSetAsFavorite ? (
+            <Fontisto name="favorite" size={24} color={COLORS.secondary} />
+          ) : (
+            <Fontisto name="favorite" size={24} color="black" />
+          )}
         </TouchableOpacity>
 
         {/* Price badge — bottom left of image */}

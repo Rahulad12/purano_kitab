@@ -37,9 +37,22 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Extract error message
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      "An unexpected error occurred";
+
     if (error.response?.status === 401) {
+      console.log("Unauthorized access, clearing storage...");
       clearStorage();
+      // Optionally redirect or notify via event emitter/context
     }
+
+    // Attach custom message to error object for hooks to use
+    error.displayMessage = message;
+
     return Promise.reject(error);
   },
 );

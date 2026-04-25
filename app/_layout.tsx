@@ -4,18 +4,21 @@ import Toast from "react-native-toast-message";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { createQueryClient } from "./api/queryClient";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 const queryClient = createQueryClient();
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <Stack screenOptions={{ headerShown: false }} />
-        </QueryClientProvider>
-        <Toast position="bottom" />
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <Stack screenOptions={{ headerShown: false }} />
+          </QueryClientProvider>
+          <Toast position="bottom" />
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

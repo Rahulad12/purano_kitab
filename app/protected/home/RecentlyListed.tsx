@@ -105,7 +105,7 @@ const RecentlyListed = ({ books, isLoading, handleFavSave }: Props) => {
           variant="link"
           onPress={() => router.push("/protected/allListedbook")}
         >
-          <Text style={globalStyles.paragraph}>View All →</Text>
+          View All →
         </Button>
       </ScrollView>
     </View>

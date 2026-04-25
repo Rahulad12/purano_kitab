@@ -4,7 +4,7 @@ import Toast from "react-native-toast-message";
 import { ChangeEmailOrPhoneDto, ChangePasswordDto, User } from "../../types";
 import axiosInstance from "../axiosInstance";
 
-export const useGetLoggedInUserDetails = () => {
+export const useGetLoggedInUserDetails = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: ["loggedInUserDetails"],
     queryFn: async () => {
@@ -12,6 +12,7 @@ export const useGetLoggedInUserDetails = () => {
         await axiosInstance.get("/users/me");
       return response.data;
     },
+    enabled: options?.enabled !== false,
   });
 };
 export const useChangePassword = () => {
